@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planejamento de Viagens - Sol de Sóter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/financas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style_viagens.css"> <!-- Novo CSS para viagens -->
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="img/soldesoter_logo.png" alt="Logo">
+        <h1>Sol de Sóter</h1>
+      </a>
+    </div>
+
+    <div class="menu-profile">
+      <nav class="navbar">
+        <ul class="nav-menu">
+          <li class="dropdown">
+            <div class="dropdown-header">
+              <a href="biblioteca.html">Biblioteca</a>
+              <button class="dropdown-toggle">▼</button>
+            </div>
+            <ul class="dropdown-menu">
+              <li><a href="livraria.html">Livraria</a></li>
+              <li><a href="cinema.html">Cinema</a></li>
+              <li><a href="anime.html">Animes</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <div class="dropdown-header">
+              <a href="pessoal.html">Pessoal</a>
+              <button class="dropdown-toggle">▼</button>
+            </div>
+            <ul class="dropdown-menu">
+              <li><a href="viagens.html">Viagens</a></li>
+              <li><a href="carrinho.html">Carrinho</a></li>
+              <li><a href="financas.html">Finanças</a></li>
+              <li><a href="academia.html">Academia</a></li>
+              <li><a href="wishlist.html">Wishlist</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <div class="dropdown-header">
+              <a href="livro.html">Livro</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="dropdown profile-dropdown">
+        <div class="profile">
+          <span>Marcos</span>
+          <img src="img/eu-gtp1.1.png" alt="Foto do Usuário">
+        </div>
+        <ul class="dropdown-menu profile-menu">
+          <li class="saldo-menu-item">
+            <div id="saldo-header">
+              <span class="saldo-header-label">Saldo Atual</span>
+              <div id="saldo-do-dia">R$ 0,00</div>
+            </div>
+          </li>
+          <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+          <li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+  </main>
+
+  <footer>
+    <p>© 2025 Sol de Sóter. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/saldo-global.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/script_viagens.js"></script> <!-- Novo JavaScript para viagens -->
+</body>
+</html>
+
