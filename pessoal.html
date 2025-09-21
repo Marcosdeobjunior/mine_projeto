@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área Pessoal - Sol de Sóter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/financas.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style_viagens.css">
+  <link rel="stylesheet" href="css/pessoal.css"> 
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="img/soldesoter_logo.png" alt="Logo">
+        <h1>Sol de Sóter</h1>
+      </a>
+    </div>
+
+    <div class="menu-profile">
+      <nav class="navbar">
+        <ul class="nav-menu">
+          <li class="dropdown">
+            <div class="dropdown-header">
+              <a href="biblioteca.html">Biblioteca</a>
+              <button class="dropdown-toggle">▼</button>
+            </div>
+            <ul class="dropdown-menu">
+              <li><a href="livraria.html">Livraria</a></li>
+              <li><a href="cinema.html">Cinema</a></li>
+              <li><a href="anime.html">Animes</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <div class="dropdown-header">
+              <a href="pessoal.html">Pessoal</a>
+              <button class="dropdown-toggle">▼</button>
+            </div>
+            <ul class="dropdown-menu">
+              <li><a href="viagens.html">Viagens</a></li>
+              <li><a href="wishlist.html">Carrinho</a></li>
+              <li><a href="financas.html">Finanças</a></li>
+              <li><a href="academia.html">Academia</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <div class="dropdown-header">
+              <a href="livro.html">Livro</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="dropdown profile-dropdown">
+        <div class="profile">
+          <span>Marcos</span>
+          <img src="img/eu-gtp1.1.png" alt="Foto do Usuário">
+        </div>
+        <ul class="dropdown-menu profile-menu">
+          <li class="saldo-menu-item">
+            <div id="saldo-header">
+              <span class="saldo-header-label">Saldo Atual</span>
+              <div id="saldo-do-dia">R$ 0,00</div>
+            </div>
+          </li>
+          <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+          <li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1>Área Pessoal - Marcos</h1>
+      
+      <section class="finance-section">
+        <h2><i class="fas fa-chart-line"></i> Controle Financeiro</h2>
+        <div class="finance-cards">
+          <div class="card">
+            <h3>Saldo Inicial</h3>
+            <p class="amount" id="pessoal-saldo-inicial">R$ 1.000,00</p>
+          </div>
+          <div class="card">
+            <h3>Despesas do Mês</h3>
+            <p class="amount" id="pessoal-despesas-mes">R$ 0,00</p>
+          </div>
+          <div class="card">
+            <h3>Valor Disponível</h3>
+            <p class="amount" id="pessoal-valor-disponivel">R$ 800,00</p>
+          </div>
+        </div>
+        
+        <div class="finance-info">
+          <div class="recommendation">
+            <h4>Recomendações</h4>
+            <p id="pessoal-melhor-dia"><strong>Melhor dia para comprar:</strong> Calculando...</p>
+            <p id="pessoal-valor-recomendado"><strong>Valor recomendado para gastar:</strong> Calculando...</p>
+          </div>
+          
+          <div class="categories">
+            <h4>Categorias de Gastos</h4>
+            <ul id="pessoal-lista-categorias">
+              </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="travel-section">
+        <h2><i class="fas fa-plane"></i> Planejamento de Viagens</h2>
+        <div class="travel-content">
+          <div class="empty-state">
+            <i class="fas fa-suitcase-rolling"></i>
+            <h3>Nenhuma viagem planejada</h3>
+            <p>Adicione sua primeira viagem para começar a planejar suas aventuras!</p>
+            <button class="btn-primary">Planejar Viagem</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wishlist-section">
+        <h2><i class="fas fa-shopping-cart"></i> Minha Lista de Desejos</h2>
+        <div class="wishlist-content">
+          <div class="empty-state">
+            <i class="fas fa-heart"></i>
+            <h3>Lista vazia</h3>
+            <p>Adicione produtos à sua lista de desejos para acompanhar seus itens favoritos.</p>
+            <button class="btn-primary">Adicionar Item</button>
+          </div>
+          
+          <div class="purchase-history">
+            <h4>Histórico de Compras</h4>
+            <p class="empty-message">Seu histórico de compras está vazio.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="summary-section">
+        <h2><i class="fas fa-chart-pie"></i> Resumo Geral</h2>
+        <div class="summary-cards">
+          <div class="summary-card">
+            <h3>Status Financeiro</h3>
+            <p class="status good">Estável</p>
+            <small>Sem despesas registradas este mês</small>
+          </div>
+          <div class="summary-card">
+            <h3>Próximas Atividades</h3>
+            <p class="status neutral">Nenhuma planejada</p>
+            <small>Considere planejar uma viagem</small>
+          </div>
+          <div class="summary-card">
+            <h3>Lista de Desejos</h3>
+            <p class="status neutral">Vazia</p>
+            <small>Adicione itens que deseja comprar</small>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Sol de Sóter. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/saldo-global.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/pessoal-financas.js"></script>
+  <script src="js/script_viagens.js"></script> 
+</body>
+</html>
