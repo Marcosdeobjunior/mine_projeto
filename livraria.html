@@ -12,8 +12,25 @@
 </head>
 <body>
   <header>
-    <div class="logo-container"><a href="index.html" class="logo-link"><img src="img/soldesoter_logo.png" alt="Logo"><h1>Sol de Sóter</h1></a></div>
-    <div class="menu-profile"><nav class="navbar"><ul class="nav-menu"><li class="dropdown"><div class="dropdown-header"><a href="biblioteca.html">Biblioteca</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="livraria.html">Livraria</a></li><li><a href="cinema.html">Cinema</a></li><li><a href="anime.html">Animes</a></li></ul></li><li class="dropdown"><div class="dropdown-header"><a href="pessoal.html">Pessoal</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="viagens.html">Viagens</a></li><li><a href="wishlist.html">Carrinho</a></li><li><a href="financas.html">Finanças</a></li><li><a href="academia.html">Academia</a></li></ul></li><li><div class="dropdown-header"><a href="livro.html">Livro</a></div></li></ul></nav><div class="dropdown profile-dropdown"><div class="profile"><span>Marcos</span><img src="img/eu-gtp1.1.png" alt="Foto do Usuário"></div><ul class="dropdown-menu profile-menu"><li class="saldo-menu-item"><div id="saldo-header"><span class="saldo-header-label">Saldo Atual</span><div id="saldo-do-dia">R$ 0,00</div></div></li><li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li><li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li></ul></div></div>
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="img/soldesoter_logo.png" alt="Logo">
+        <h1>Sol de Sóter</h1>
+      </a>
+    </div>
+    <div class="menu-profile">
+      <nav class="navbar">
+        <ul class="nav-menu">
+          <li class="dropdown"><div class="dropdown-header"><a href="biblioteca.html">Biblioteca</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="livraria.html">Livraria</a></li><li><a href="cinema.html">Cinema</a></li><li><a href="anime.html">Animes</a></li></ul></li>
+          <li class="dropdown"><div class="dropdown-header"><a href="pessoal.html">Pessoal</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="viagens.html">Viagens</a></li><li><a href="wishlist.html">Carrinho</a></li><li><a href="financas.html">Finanças</a></li><li><a href="academia.html">Academia</a></li></ul></li>
+          <li><div class="dropdown-header"><a href="livro.html">Livro</a></div></li>
+        </ul>
+      </nav>
+      <div class="dropdown profile-dropdown">
+        <div class="profile"><span>Marcos</span><img src="img/eu-gtp1.1.png" alt="Foto do Usuário"></div>
+        <ul class="dropdown-menu profile-menu"><li class="saldo-menu-item"><div id="saldo-header"><span class="saldo-header-label">Saldo Atual</span><div id="saldo-do-dia">R$ 0,00</div></div></li><li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li><li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li></ul>
+      </div>
+    </div>
   </header>
 
   <main class="container">
@@ -21,42 +38,76 @@
         <h2>Minha Livraria</h2>
     </div>
     <section id="stats-bar" class="stats-bar"></section>
-    
-    <section class="goal-container">
-        <h3>Meta Anual de Leitura</h3>
-        <div class="goal-progress">
-            <div class="progress-bar-container">
-                <div id="progress-bar" class="progress-bar">
-                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
-                </div>
-                <span id="progress-text">0/0</span>
-            </div>
-            <div class="goal-input">
-                <label for="reading-goal-input">Definir meta:</label>
-                <input type="number" id="reading-goal-input" min="1">
-            </div>
+
+    <div class="library-layout">
+        <div class="book-main-content">
+            <nav id="shelf-tabs" class="shelf-tabs">
+                <button class="tab-item active" data-status-filter="all">Todos</button>
+                <button class="tab-item" data-status-filter="quero-ler">Quero Ler</button>
+                <button class="tab-item" data-status-filter="lendo">Lendo</button>
+                <button class="tab-item" data-status-filter="lido">Lido</button>
+            </nav>
+            <section id="book-grid" class="book-grid"></section>
         </div>
-    </section>
-
-    <nav id="shelf-tabs" class="shelf-tabs">
-        <button class="tab-item active" data-status-filter="all">Todos</button>
-        <button class="tab-item" data-status-filter="quero-ler">Quero Ler</button>
-        <button class="tab-item" data-status-filter="lendo">Lendo</button>
-        <button class="tab-item" data-status-filter="lido">Lido</button>
-    </nav>
-
-    <section id="book-grid" class="book-grid">
-        </section>
+        <aside id="library-sidebar" class="library-sidebar">
+            <div class="goal-container">
+                <h3>Meta Anual de Leitura</h3>
+                <div class="goal-progress">
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar">
+                            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                        </div>
+                        <span id="progress-text">0/0</span>
+                    </div>
+                    <div class="goal-input">
+                        <label for="reading-goal-input">Definir meta:</label>
+                        <input type="number" id="reading-goal-input" min="1">
+                    </div>
+                </div>
+            </div>
+            </aside>
+    </div>
   </main>
   
   <footer>
     <p>© 2025 Sol de Sóter. Todos os direitos reservados.</p>
   </footer>
 
-  <div id="book-modal" class="modal-overlay"><div class="modal-content"><button class="modal-close" data-action="close-modal">&times;</button><h2 id="modal-title">Adicionar Novo Livro</h2><form id="book-form"><input type="hidden" id="book-id"><div class="form-grid-edit"><div class="form-group"><label for="book-title">Título</label><input type="text" id="book-title" required></div><div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div><div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div><div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div><div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div><div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div><div class="form-group"><label for="book-page-count">Páginas</label><input type="number" id="book-page-count"></div><div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div></div><div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div><button type="submit" class="btn">Salvar</button></form></div></div>
-  <div id="book-detail-modal" class="modal-overlay"><div class="modal-content large"><button class="modal-close" data-action="close-modal">&times;</button><div id="book-detail-content"></div></div></div>
+  <div id="book-modal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="modal-close" data-action="close-modal">&times;</button>
+          <h2 id="modal-title">Adicionar Novo Livro</h2>
+          <form id="book-form">
+              <input type="hidden" id="book-id">
+              <div class="form-grid-edit">
+                  <div class="form-group"><label for="book-title">Título</label><input type="text" id="book-title" required></div>
+                  <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
+                  <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
+                  <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
+                  <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
+                  <div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year" placeholder="Ex: 2023"></div>
+                  <div class="form-group"><label for="book-page-count">Páginas</label><input type="number" id="book-page-count"></div>
+                  <div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
+              </div>
+              <div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div>
+              <button type="submit" class="btn">Salvar</button>
+          </form>
+      </div>
+  </div>
 
-  <div id="fab-container" class="fab-container"><div class="fab-actions"><button class="fab-action" data-action="open-add-modal" title="Adicionar Livro"><i class="fas fa-plus"></i></button></div><button class="fab-main" id="fab-main-btn" title="Menu de Ações"><div class="fab-icon-wrapper"><span></span><span></span><span></span></div></button></div>
+  <div id="book-detail-modal" class="modal-overlay">
+      <div class="modal-content large">
+          <button class="modal-close" data-action="close-modal">&times;</button>
+          <div id="book-detail-content"></div>
+      </div>
+  </div>
+
+  <div id="fab-container" class="fab-container">
+    <div class="fab-actions">
+        <button class="fab-action" data-action="open-add-modal" title="Adicionar Livro"><i class="fas fa-plus"></i></button>
+    </div>
+    <button class="fab-main" id="fab-main-btn" title="Menu de Ações"><div class="fab-icon-wrapper"><span></span><span></span><span></span></div></button>
+  </div>
 
   <script src="js/saldo-global.js"></script>
   <script src="js/script.js"></script>
