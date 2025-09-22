@@ -36,8 +36,7 @@
   <main class="container">
     <div class="library-header">
         <h2>Minha Livraria</h2>
-        <button class="btn-add-book" data-action="open-add-modal"><i class="fas fa-plus"></i> Adicionar Livro</button>
-    </div>
+        </div>
     <section id="stats-bar" class="stats-bar"></section>
     <section id="book-shelves" class="book-shelves">
         <div class="shelf-column"><h3><i class="fas fa-book-bookmark"></i> Quero Ler</h3><div class="book-cards" data-status="quero-ler"></div></div>
@@ -52,7 +51,7 @@
 
   <div id="book-modal" class="modal-overlay">
       <div class="modal-content">
-          <button class="modal-close" data-action="close-edit-modal">&times;</button>
+          <button class="modal-close" data-action="close-modal">&times;</button>
           <h2 id="modal-title">Adicionar Novo Livro</h2>
           <form id="book-form">
               <input type="hidden" id="book-id">
@@ -60,7 +59,7 @@
               <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
               <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
               <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
-              <div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
+              <div class="form-group"><label for="book-cover">URL da Capa (Opcional)</label><input type="url" id="book-cover" placeholder="https://..."></div>
               <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
               <div class="form-group-row">
                   <div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div>
@@ -75,9 +74,14 @@
   <div id="book-detail-modal" class="modal-overlay">
       <div class="modal-content large">
           <button class="modal-close" data-action="close-detail-modal">&times;</button>
-          <div id="book-detail-content">
-              </div>
+          <div id="book-detail-content"></div>
       </div>
+  </div>
+
+  <div class="fab-container">
+    <button class="fab" data-action="open-add-modal" title="Adicionar Novo Livro">
+        <i class="fas fa-plus"></i>
+    </button>
   </div>
 
   <script src="js/saldo-global.js"></script>
