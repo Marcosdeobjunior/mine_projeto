@@ -20,7 +20,7 @@
     <div class="library-header">
         <h2>Minha Livraria</h2>
         <div class="library-controls">
-            <input type="search" id="search-input" placeholder="Buscar por Título ou Autor...">
+            <input type="search" id="search-input" placeholder="Buscar por Título, Autor ou Gênero...">
             <select id="sort-by">
                 <option value="default">Ordenar por</option>
                 <option value="title-asc">Título (A-Z)</option>
@@ -30,17 +30,14 @@
         </div>
     </div>
     <section id="stats-bar" class="stats-bar"></section>
-    
-    <div class="tabs-container">
-        <div class="main-tabs" id="main-tabs">
-            <button class="main-tab-item active" data-main-filter="status">Status</button>
-            <button class="main-tab-item" data-main-filter="favorites">Favoritos</button>
-            <button class="main-tab-item" data-main-filter="genres">Gêneros</button>
-            <button class="main-tab-item" data-main-filter="authors">Autores</button>
-        </div>
-        <nav id="shelf-tabs" class="shelf-tabs">
-            </nav>
-    </div>
+
+    <nav id="shelf-tabs" class="shelf-tabs">
+        <button class="tab-item active" data-status-filter="all">Todos</button>
+        <button class="tab-item" data-status-filter="quero-ler">Quero Ler</button>
+        <button class="tab-item" data-status-filter="lendo">Lendo</button>
+        <button class="tab-item" data-status-filter="lido">Lido</button>
+        <button class="tab-item" data-status-filter="favorites">Favoritos ★</button>
+    </nav>
 
     <section id="book-grid" class="book-grid"></section>
   </main>
@@ -49,9 +46,41 @@
     <p>© 2025 Sol de Sóter. Todos os direitos reservados.</p>
   </footer>
 
-  <div id="book-modal" class="modal-overlay"><div class="modal-content"><button class="modal-close" data-action="close-modal">&times;</button><h2 id="modal-title">Adicionar Livro</h2><form id="book-form"><input type="hidden" id="book-id"><div class="form-grid-edit"><div class="form-group span-2"><label for="book-title">Título</label><input type="text" id="book-title" required></div><div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div><div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div><div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div><div class="form-group"><label for="book-rating">Nota (0-5)</label><input type="number" id="book-rating" min="0" max="5" step="1"></div><div class="form-group span-2"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div></div><hr><div class="form-grid-edit"><div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div><div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div><div class="form-group"><label for="book-page-count">Total de Páginas</label><input type="number" id="book-page-count"></div><div class="form-group"><label for="book-current-page">Página Atual</label><input type="number" id="book-current-page"></div><div class="form-group"><label for="book-series-name">Nome da Série</label><input type="text" id="book-series-name"></div><div class="form-group"><label for="book-series-number">Nº na Série</label><input type="number" id="book-series-number"></div></div><div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div><button type="submit" class="btn">Salvar</button></form></div></div>
+  <div id="book-modal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="modal-close" data-action="close-modal">&times;</button>
+          <h2 id="modal-title">Adicionar Novo Livro</h2>
+          <form id="book-form">
+              <input type="hidden" id="book-id">
+              <div class="form-grid-edit">
+                  <div class="form-group span-2"><label for="book-title">Título</label><input type="text" id="book-title" required></div>
+                  <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
+                  <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
+                  <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
+                  <div class="form-group"><label for="book-rating">Nota (0-5)</label><input type="number" id="book-rating" min="0" max="5" step="1" value="0"></div>
+                  <div class="form-group span-2"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
+              </div>
+              <hr>
+              <div class="form-grid-edit">
+                  <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
+                  <div class="form-group"><label for="book-publish-year">Ano de Publicação</label><input type="number" id="book-publish-year"></div>
+                  <div class="form-group"><label for="book-page-count">Total de Páginas</label><input type="number" id="book-page-count" min="0"></div>
+                  <div class="form-group"><label for="book-current-page">Página Atual</label><input type="number" id="book-current-page" min="0"></div>
+                  <div class="form-group"><label for="book-series-name">Nome da Série</label><input type="text" id="book-series-name"></div>
+                  <div class="form-group"><label for="book-series-number">Nº na Série</label><input type="number" id="book-series-number" min="1"></div>
+              </div>
+              <div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div>
+              <button type="submit" class="btn">Salvar</button>
+          </form>
+      </div>
+  </div>
   
-  <div id="book-detail-modal" class="modal-overlay"><div class="modal-content large"><button class="modal-close" data-action="close-modal">&times;</button><div id="book-detail-content"></div></div></div>
+  <div id="book-detail-modal" class="modal-overlay">
+      <div class="modal-content large">
+          <button class="modal-close" data-action="close-modal">&times;</button>
+          <div id="book-detail-content"></div>
+      </div>
+  </div>
 
   <div id="fab-container" class="fab-container"><div class="fab-actions"><button class="fab-action" data-action="open-add-modal" title="Adicionar Livro"><i class="fas fa-plus"></i></button></div><button class="fab-main" id="fab-main-btn" title="Menu de Ações"><div class="fab-icon-wrapper"><span></span><span></span><span></span></div></button></div>
 
