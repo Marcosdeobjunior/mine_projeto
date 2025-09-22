@@ -26,8 +26,22 @@
         <div id="book-grid" class="book-grid">
             </div>
         <aside id="library-sidebar" class="library-sidebar">
+            <div class="goal-container">
+                <h3>Meta Anual</h3>
+                <div class="goal-input">
+                    <input type="number" id="reading-goal-input" min="1">
+                    <label for="reading-goal-input">livros</label>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar">
+                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                    </div>
+                    <span id="progress-text">0/0</span>
+                </div>
+            </div>
+            
             <h3>Status</h3>
-            <div id="status-filters">
+            <div id="status-filters" class="status-filters">
                 </div>
         </aside>
     </div>
@@ -43,17 +57,17 @@
           <h2 id="modal-title">Adicionar Novo Livro</h2>
           <form id="book-form">
               <input type="hidden" id="book-id">
-              <div class="form-group"><label for="book-title">Título</label><input type="text" id="book-title" required></div>
-              <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
-              <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
-              <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
-              <div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
-              <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
-              <div class="form-group-row">
+              <div class="form-grid-edit">
+                  <div class="form-group"><label for="book-title">Título</label><input type="text" id="book-title" required></div>
+                  <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
+                  <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
+                  <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
+                  <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
                   <div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div>
                   <div class="form-group"><label for="book-page-count">Páginas</label><input type="number" id="book-page-count"></div>
+                  <div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
               </div>
-              <div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="3"></textarea></div>
+              <div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div>
               <button type="submit" class="btn">Salvar</button>
           </form>
       </div>
@@ -61,22 +75,16 @@
 
   <div id="book-detail-modal" class="modal-overlay">
       <div class="modal-content large">
-          <button class="modal-close" data-action="close-detail-modal">&times;</button>
+          <button class="modal-close" data-action="close-modal">&times;</button>
           <div id="book-detail-content"></div>
       </div>
   </div>
 
   <div id="fab-container" class="fab-container">
     <div class="fab-actions">
-        <button class="fab-action" data-action="open-add-modal" title="Adicionar Livro">
-            <i class="fas fa-plus"></i>
-        </button>
+        <button class="fab-action" data-action="open-add-modal" title="Adicionar Livro"><i class="fas fa-plus"></i></button>
     </div>
-    <button class="fab-main" id="fab-main-btn" title="Menu de Ações">
-        <div class="fab-icon-wrapper">
-            <span></span><span></span><span></span>
-        </div>
-    </button>
+    <button class="fab-main" id="fab-main-btn" title="Menu de Ações"><div class="fab-icon-wrapper"><span></span><span></span><span></span></div></button>
   </div>
 
   <script src="js/saldo-global.js"></script>
