@@ -16,7 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeStatusFilter = 'all';
 
     // --- FUNÇÕES DE DADOS (LocalStorage) ---
-    const getBooks = () => JSON.parse(localStorage.getItem('myBooks')) || [];
+    const getBooks = () => {
+        let books = JSON.parse(localStorage.getItem('myBooks')) || [];
+        // Migração de dados para garantir que livros antigos tenham os novos campos
+        books.forEach(book => {
+            if (book.publisher === undefined) book.publisher = '';
+            if (book.publishYear === undefined) book.publishYear = '';
+            if (book.pageCount === undefined) book.pageCount = '';
+            if (book.synopsis === undefined) book.synopsis = '';
+            if (book.review === undefined) book.review = '';
+        });
+        return books;
+    };
     const saveBooks = (books) => localStorage.setItem('myBooks', JSON.stringify(books));
     const getReadingGoal = () => Number(localStorage.getItem('readingGoal2025')) || 20;
     const saveReadingGoal = (goal) => localStorage.setItem('readingGoal2025', goal);
@@ -25,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const render = () => {
         const books = getBooks();
         renderStats(books);
-        renderReadingGoal(books);
+        renderSidebar(books);
         renderBookGrid(books);
     };
 
@@ -36,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statsBar.innerHTML = `<div class="stat-item"><h4>Total</h4><p>${total}</p></div><div class="stat-item"><h4>Lendo</h4><p>${lendo}</p></div><div class="stat-item"><h4>Lidos</h4><p>${lido}</p></div>`;
     };
 
-    const renderReadingGoal = (books) => {
+    const renderSidebar = (books) => {
         const lido = books.filter(b => b.status === 'lido').length;
         const goal = getReadingGoal();
         goalInput.value = goal;
@@ -130,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         if (id) {
             const bookIndex = books.findIndex(b => b.id === id);
-            if (bookIndex > -1) books[bookIndex] = { ...books[bookIndex], review: books[bookIndex].review, ...bookData };
+            if (bookIndex > -1) books[bookIndex] = { ...books[bookIndex], ...bookData };
         } else {
             books.push({ ...bookData, id: Date.now(), review: '' });
         }
