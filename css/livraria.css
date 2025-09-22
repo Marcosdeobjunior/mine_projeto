@@ -4,9 +4,13 @@
     --color-read: #2ecc71;
 }
 
+/* --- ALTERAÇÃO PRINCIPAL AQUI --- */
 main.container {
-    max-width: 1400px; /* Layout mais largo para as colunas */
+    max-width: 100%; /* Remove o limite de largura */
+    padding-left: 2rem; /* Mantém um espaçamento lateral agradável */
+    padding-right: 2rem;
 }
+/* --- FIM DA ALTERAÇÃO --- */
 
 .library-header {
     display: flex;
@@ -145,6 +149,18 @@ main.container {
     position: absolute; top: 1rem; right: 1rem;
     background: none; border: none; font-size: 1.5rem;
     color: var(--color-text-secondary); cursor: pointer;
+}
+
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; }
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 1rem;
 }
 
 @media (max-width: 768px) {
