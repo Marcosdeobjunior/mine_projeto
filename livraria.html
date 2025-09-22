@@ -12,37 +12,25 @@
 </head>
 <body>
   <header>
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="img/soldesoter_logo.png" alt="Logo">
-        <h1>Sol de Sóter</h1>
-      </a>
-    </div>
-    <div class="menu-profile">
-      <nav class="navbar">
-        <ul class="nav-menu">
-          <li class="dropdown"><div class="dropdown-header"><a href="biblioteca.html">Biblioteca</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="livraria.html">Livraria</a></li><li><a href="cinema.html">Cinema</a></li><li><a href="anime.html">Animes</a></li></ul></li>
-          <li class="dropdown"><div class="dropdown-header"><a href="pessoal.html">Pessoal</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="viagens.html">Viagens</a></li><li><a href="wishlist.html">Carrinho</a></li><li><a href="financas.html">Finanças</a></li><li><a href="academia.html">Academia</a></li></ul></li>
-          <li><div class="dropdown-header"><a href="livro.html">Livro</a></div></li>
-        </ul>
-      </nav>
-      <div class="dropdown profile-dropdown">
-        <div class="profile"><span>Marcos</span><img src="img/eu-gtp1.1.png" alt="Foto do Usuário"></div>
-        <ul class="dropdown-menu profile-menu"><li class="saldo-menu-item"><div id="saldo-header"><span class="saldo-header-label">Saldo Atual</span><div id="saldo-do-dia">R$ 0,00</div></div></li><li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li><li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li></ul>
-      </div>
-    </div>
+    <div class="logo-container"><a href="index.html" class="logo-link"><img src="img/soldesoter_logo.png" alt="Logo"><h1>Sol de Sóter</h1></a></div>
+    <div class="menu-profile"><nav class="navbar"><ul class="nav-menu"><li class="dropdown"><div class="dropdown-header"><a href="biblioteca.html">Biblioteca</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="livraria.html">Livraria</a></li><li><a href="cinema.html">Cinema</a></li><li><a href="anime.html">Animes</a></li></ul></li><li class="dropdown"><div class="dropdown-header"><a href="pessoal.html">Pessoal</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="viagens.html">Viagens</a></li><li><a href="wishlist.html">Carrinho</a></li><li><a href="financas.html">Finanças</a></li><li><a href="academia.html">Academia</a></li></ul></li><li><div class="dropdown-header"><a href="livro.html">Livro</a></div></li></ul></nav><div class="dropdown profile-dropdown"><div class="profile"><span>Marcos</span><img src="img/eu-gtp1.1.png" alt="Foto do Usuário"></div><ul class="dropdown-menu profile-menu"><li class="saldo-menu-item"><div id="saldo-header"><span class="saldo-header-label">Saldo Atual</span><div id="saldo-do-dia">R$ 0,00</div></div></li><li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li><li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li></ul></div></div>
   </header>
 
   <main class="container">
     <div class="library-header">
         <h2>Minha Livraria</h2>
-        </div>
+    </div>
     <section id="stats-bar" class="stats-bar"></section>
-    <section id="book-shelves" class="book-shelves">
-        <div class="shelf-column"><h3><i class="fas fa-book-bookmark"></i> Quero Ler</h3><div class="book-cards" data-status="quero-ler"></div></div>
-        <div class="shelf-column"><h3><i class="fas fa-book-open"></i> Lendo</h3><div class="book-cards" data-status="lendo"></div></div>
-        <div class="shelf-column"><h3><i class="fas fa-check-double"></i> Lido</h3><div class="book-cards" data-status="lido"></div></div>
-    </section>
+
+    <div class="library-layout">
+        <div id="book-grid" class="book-grid">
+            </div>
+        <aside id="library-sidebar" class="library-sidebar">
+            <h3>Status</h3>
+            <div id="status-filters">
+                </div>
+        </aside>
+    </div>
   </main>
   
   <footer>
@@ -59,7 +47,7 @@
               <div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div>
               <div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div>
               <div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div>
-              <div class="form-group"><label for="book-cover">URL da Capa (Opcional)</label><input type="url" id="book-cover" placeholder="https://..."></div>
+              <div class="form-group"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div>
               <div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div>
               <div class="form-group-row">
                   <div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div>
@@ -78,9 +66,16 @@
       </div>
   </div>
 
-  <div class="fab-container">
-    <button class="fab" data-action="open-add-modal" title="Adicionar Novo Livro">
-        <i class="fas fa-plus"></i>
+  <div id="fab-container" class="fab-container">
+    <div class="fab-actions">
+        <button class="fab-action" data-action="open-add-modal" title="Adicionar Livro">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    <button class="fab-main" id="fab-main-btn" title="Menu de Ações">
+        <div class="fab-icon-wrapper">
+            <span></span><span></span><span></span>
+        </div>
     </button>
   </div>
 
