@@ -1,77 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Livraria - Sol de Sóter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="css/financas.css"> 
-  <link rel="stylesheet" href="css/livraria.css">
-  <link rel="icon" type="image/png" href="img/soldesoter_logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base da Livraria</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; background-color: #f4f4f4; }
+        .container { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #333; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #555; }
+        #book-list { list-style: none; padding: 0; }
+        .book-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f9f9f9; border-radius: 4px; margin-bottom: 0.5rem; }
+        .delete-btn { background: #c00; }
+    </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="img/soldesoter_logo.png" alt="Logo">
-        <h1>Sol de Sóter</h1>
-      </a>
-    </div>
-    <nav class="navbar" id="main-nav">
-        <ul class="nav-menu">
-          <li class="dropdown"><div class="dropdown-header"><a href="biblioteca.html">Biblioteca</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="livraria.html">Livraria</a></li><li><a href="cinema.html">Cinema</a></li><li><a href="anime.html">Animes</a></li></ul></li>
-          <li class="dropdown"><div class="dropdown-header"><a href="pessoal.html">Pessoal</a><button class="dropdown-toggle">▼</button></div><ul class="dropdown-menu"><li><a href="viagens.html">Viagens</a></li><li><a href="wishlist.html">Carrinho</a></li><li><a href="financas.html">Finanças</a></li><li><a href="academia.html">Academia</a></li></ul></li>
-          <li><div class="dropdown-header"><a href="livro.html">Livro</a></div></li>
-        </ul>
-    </nav>
-    <div class="menu-profile">
-      <div class="dropdown profile-dropdown">
-        <div class="profile"><span>Marcos</span><img src="img/eu-gtp1.1.png" alt="Foto do Usuário"></div>
-        <ul class="dropdown-menu profile-menu"><li class="saldo-menu-item"><div id="saldo-header"><span class="saldo-header-label">Saldo Atual</span><div id="saldo-do-dia">R$ 0,00</div></div></li><li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li><li><a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a></li></ul>
-      </div>
-    </div>
-    <button class="hamburger" id="hamburger-menu"><span></span><span></span><span></span></button>
-  </header>
 
-  <main class="container">
-    <div class="library-header">
-        <h2>Minha Livraria</h2>
-        <div class="library-controls">
-            <input type="search" id="search-input" placeholder="Buscar por Título ou Autor...">
-            <select id="sort-by">
-                <option value="default">Ordenar por</option>
-                <option value="title-asc">Título (A-Z)</option>
-                <option value="author-asc">Autor (A-Z)</option>
-                <option value="genre-asc">Gênero (A-Z)</option>
-            </select>
-        </div>
-    </div>
-    <section id="stats-bar" class="stats-bar"></section>
-    
-    <div class="tabs-container">
-        <div class="main-tabs" id="main-tabs">
-            <button class="main-tab-item active" data-main-filter="status">Status</button>
-            <button class="main-tab-item" data-main-filter="favorites">Favoritos</button>
-            <button class="main-tab-item" data-main-filter="genres">Gêneros</button>
-            <button class="main-tab-item" data-main-filter="authors">Autores</button>
-        </div>
-        <nav id="shelf-tabs" class="shelf-tabs"></nav>
+    <div class="container">
+        <h1>Minha Livraria (Base)</h1>
+
+        <section>
+            <h2>Adicionar Novo Livro</h2>
+            <form id="add-book-form">
+                <div class="form-group">
+                    <label for="book-title">Título do Livro</label>
+                    <input type="text" id="book-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="book-author">Autor</label>
+                    <input type="text" id="book-author" required>
+                </div>
+                <button type="submit">Adicionar Livro</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Livros Cadastrados</h2>
+            <ul id="book-list">
+                </ul>
+        </section>
     </div>
 
-    <section id="book-grid" class="book-grid"></section>
-  </main>
-  
-  <footer>
-    <p>© 2025 Sol de Sóter. Todos os direitos reservados.</p>
-  </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookForm = document.getElementById('add-book-form');
+            const bookList = document.getElementById('book-list');
 
-  <div id="book-modal" class="modal-overlay"><div class="modal-content"><button class="modal-close" data-action="close-modal">&times;</button><h2 id="modal-title">Adicionar Livro</h2><form id="book-form"><input type="hidden" id="book-id"><div class="form-grid-edit"><div class="form-group span-2"><label for="book-title">Título</label><input type="text" id="book-title" required></div><div class="form-group"><label for="book-author">Autor</label><input type="text" id="book-author" required></div><div class="form-group"><label for="book-genre">Gênero</label><input type="text" id="book-genre"></div><div class="form-group"><label for="book-status">Status</label><select id="book-status"><option value="quero-ler">Quero Ler</option><option value="lendo">Lendo</option><option value="lido">Lido</option></select></div><div class="form-group"><label for="book-rating">Nota (0-5)</label><input type="number" id="book-rating" min="0" max="5" step="1" value="0"></div><div class="form-group span-2"><label for="book-cover">URL da Capa</label><input type="url" id="book-cover" placeholder="https://..."></div></div><hr><div class="form-grid-edit"><div class="form-group"><label for="book-publisher">Editora</label><input type="text" id="book-publisher"></div><div class="form-group"><label for="book-publish-year">Ano</label><input type="number" id="book-publish-year"></div><div class="form-group"><label for="book-page-count">Total de Páginas</label><input type="number" id="book-page-count" min="0"></div><div class="form-group"><label for="book-current-page">Página Atual</label><input type="number" id="book-current-page" min="0"></div><div class="form-group"><label for="book-series-name">Nome da Série</label><input type="text" id="book-series-name"></div><div class="form-group"><label for="book-series-number">Nº na Série</label><input type="number" id="book-series-number" min="1"></div></div><div class="form-group"><label for="book-synopsis">Sinopse</label><textarea id="book-synopsis" rows="4"></textarea></div><button type="submit" class="btn">Salvar</button></form></div></div>
-  <div id="book-detail-modal" class="modal-overlay"><div class="modal-content large"><button class="modal-close" data-action="close-modal">&times;</button><div id="book-detail-content"></div></div></div>
-  <div id="fab-container" class="fab-container"><div class="fab-actions"><button class="fab-action" data-action="open-add-modal" title="Adicionar Livro"><i class="fas fa-plus"></i></button></div><button class="fab-main" id="fab-main-btn" title="Menu de Ações"><div class="fab-icon-wrapper"><span></span><span></span><span></span></div></button></div>
+            // --- Funções de Dados (LocalStorage) ---
+            const getBooks = () => JSON.parse(localStorage.getItem('mySimpleBooks')) || [];
+            const saveBooks = (books) => localStorage.setItem('mySimpleBooks', JSON.stringify(books));
 
-  <script src="js/saldo-global.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/livraria.js"></script>
+            // --- Renderização ---
+            const render = () => {
+                const books = getBooks();
+                bookList.innerHTML = ''; // Limpa a lista
+
+                if (books.length === 0) {
+                    bookList.innerHTML = '<p>Nenhum livro cadastrado ainda.</p>';
+                    return;
+                }
+
+                books.forEach(book => {
+                    const li = document.createElement('li');
+                    li.className = 'book-item';
+                    li.dataset.id = book.id;
+                    li.innerHTML = `
+                        <div>
+                            <strong>${book.title}</strong>
+                            <br>
+                            <small>${book.author}</small>
+                        </div>
+                        <button class="delete-btn" data-action="delete">Excluir</button>
+                    `;
+                    bookList.appendChild(li);
+                });
+            };
+
+            // --- Eventos ---
+            bookForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const books = getBooks();
+                const newBook = {
+                    id: Date.now(),
+                    title: document.getElementById('book-title').value,
+                    author: document.getElementById('book-author').value,
+                };
+                books.push(newBook);
+                saveBooks(books);
+                bookForm.reset();
+                render();
+            });
+
+            bookList.addEventListener('click', (e) => {
+                if (e.target.dataset.action === 'delete') {
+                    const itemId = Number(e.target.closest('.book-item').dataset.id);
+                    let books = getBooks();
+                    books = books.filter(book => book.id !== itemId);
+                    saveBooks(books);
+                    render();
+                }
+            });
+
+            // --- Inicialização ---
+            render();
+        });
+    </script>
+
 </body>
 </html>
