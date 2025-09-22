@@ -10,13 +10,38 @@ main.container { max-width: 100%; padding: 2rem; }
 .stat-item { background-color: var(--color-surface-variant); padding: 1.5rem; border-radius: var(--border-radius); }
 .stat-item h4 { margin: 0 0 0.5rem; color: var(--color-text-secondary); font-size: 1rem; }
 .stat-item p { margin: 0; font-size: 2rem; font-weight: 700; color: var(--color-primary-light); }
-.library-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 2rem; align-items: flex-start; }
-.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-.library-sidebar h3 { padding-bottom: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--color-border); }
-.status-filters .filter-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-.status-filters .filter-item:hover { background-color: var(--color-surface-variant); }
-.status-filters .filter-item.active { background-color: var(--color-primary-light); border-color: var(--color-primary); font-weight: 600; }
-.status-filters .count { background-color: var(--color-primary); color: white; font-size: 0.8rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; }
+
+/* --- NOVAS ABAS DE FILTRO --- */
+.shelf-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--color-border);
+}
+.tab-item {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -2px; /* Alinha a borda com a borda principal */
+}
+.tab-item:hover { color: var(--color-text); }
+.tab-item.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* --- GRADE PRINCIPAL DE LIVROS --- */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
 .book-card { background-color: var(--color-surface-variant); border-radius: var(--border-radius); padding: 1rem; display: flex; gap: 1rem; cursor: pointer; border-left: 4px solid; transition: box-shadow 0.2s, transform 0.2s; }
 .book-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
 .book-card[data-status="quero-ler"] { border-color: var(--color-want-to-read); }
@@ -25,8 +50,10 @@ main.container { max-width: 100%; padding: 2rem; }
 .book-cover { width: 60px; height: 90px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
 .book-info h4 { margin: 0 0 0.25rem; }
 .book-info p { margin: 0; font-size: 0.9rem; color: var(--color-text-secondary); }
+
+/* --- BOTÃO FLUTUANTE (FAB) --- */
 .fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 100; display: flex; flex-direction: column-reverse; align-items: center; }
-.fab-main { width: 60px; height: 60px; background-color: var(--color-primary); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.3s ease; z-index: 101; }
+.fab-main { width: 60px; height: 60px; background-color: var(--color-primary); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.3s ease; z-index: 101; }
 .fab-container.open .fab-main { transform: rotate(45deg); }
 .fab-icon-wrapper span { display: block; width: 25px; height: 3px; background-color: white; margin: 5px auto; transition: all 0.3s ease; }
 .fab-container.open .fab-icon-wrapper span:nth-child(1) { transform: translateY(8px) rotate(90deg); }
@@ -35,36 +62,15 @@ main.container { max-width: 100%; padding: 2rem; }
 .fab-actions { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem; list-style: none; padding: 0; }
 .fab-action { width: 48px; height: 48px; background-color: var(--color-surface); color: var(--color-primary); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; transform: scale(0); transition: transform 0.3s ease; }
 .fab-container.open .fab-action { transform: scale(1); }
+
+/* --- MODAIS (Estilos permanecem os mesmos) --- */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
 .modal-overlay.visible { display: flex; }
 .modal-content { background-color: var(--color-surface); padding: 2rem; border-radius: var(--border-radius); width: 90%; max-width: 500px; position: relative; }
-.modal-content.large { max-width: 1100px; max-height: 85vh; overflow-y: auto; } /* TAMANHO AUMENTADO */
+.modal-content.large { max-width: 1100px; max-height: 85vh; overflow-y: auto; }
 .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; color: var(--color-text-secondary); cursor: pointer; }
 .form-group { margin-bottom: 1rem; }
-.form-group-row, .form-grid-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-group label { display: block; margin-bottom: 0.5rem; }
 .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem; border-radius: 6px; border: 1px solid var(--color-border); background-color: var(--color-background); color: var(--color-text); font-size: 1rem; font-family: 'Poppins', sans-serif; }
-.form-group textarea { resize: vertical; }
-
-/* --- NOVO MODAL DE DETALHES --- */
 .detail-modal-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2.5rem; }
-.detail-cover img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-.detail-info h2 { font-size: 2.2rem; margin: 0 0 0.5rem; border: none; padding: 0; }
-.detail-info h3 { font-size: 1.3rem; color: var(--color-text-secondary); margin: 0 0 1.5rem; font-weight: 400; }
-.book-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
-.meta-item span { display: block; color: var(--color-text-secondary); font-size: 0.9rem; }
-.meta-item strong { font-size: 1.1rem; }
-.book-synopsis p { line-height: 1.7; color: #ccc; }
-.book-review textarea { width: 100%; height: 120px; margin-bottom: 1rem; }
-.detail-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
-.detail-actions .btn { padding: 0.8rem 1.5rem; }
-
-/* --- NOVA META DE LEITURA --- */
-.goal-container { background-color: var(--color-surface-variant); padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1.5rem; }
-.goal-container h3 { margin: 0 0 1rem; font-size: 1.1rem; }
-.goal-input { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-.goal-input input { width: 80px; padding: 0.5rem; text-align: center; }
-.progress-bar-container { display: flex; align-items: center; gap: 1rem; }
-.progress-bar { flex-grow: 1; height: 10px; background-color: var(--color-background); border-radius: 5px; overflow: hidden; }
-.progress-bar-fill { height: 100%; width: 0%; background-color: var(--color-read); border-radius: 5px; transition: width 0.5s ease; }
-#progress-text { font-weight: 600; }
