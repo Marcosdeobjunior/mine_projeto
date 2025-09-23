@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Cósmico - Gerador de Poderes</title>
+    <title>Nexus Cósmico - Gerador de Poderes e Personagens</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,7 @@
             --bg-color: #0d0f18; --card-bg-color: rgba(23, 22, 36, 0.7); --primary-glow: #7b2cbf;
             --secondary-glow: #2c73bf; --text-color: #e2e8f0; --text-muted: #94a3b8;
             --border-color: rgba(123, 44, 191, 0.3); --success-color: #10b981; --danger-color: #ef4444;
+            --character-glow: #f59e0b;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -54,7 +55,10 @@
         #battle-btn, #arena-battle-btn { border-color: #f9d423; display: none; } #battle-btn:hover, #arena-battle-btn:hover { background-color: #f9d423; box-shadow: 0 0 20px #f9d423; }
         #arena-battle-btn { margin-top: 1.5rem; }
         #arena-battle-btn:disabled { cursor: not-allowed; opacity: 0.5; }
-        #view-toggle-btn { border-color: var(--text-muted); } #view-toggle-btn:hover { background-color: var(--text-muted); color: var(--bg-color); }
+        #view-toggle-btn, #character-toggle-btn { border-color: var(--text-muted); } 
+        #view-toggle-btn:hover, #character-toggle-btn:hover { background-color: var(--text-muted); color: var(--bg-color); }
+        #character-toggle-btn { border-color: var(--character-glow); }
+        #character-toggle-btn:hover { background-color: var(--character-glow); color: var(--bg-color); }
         
         .theme-selector-wrapper { display: flex; align-items: center; gap: 0.5rem; }
         #theme-selector {
@@ -94,27 +98,28 @@
         .action-icon.share-btn:hover { border-color: var(--secondary-glow); background-color: var(--secondary-glow); }
         .save-btn:disabled { background-color: var(--success-color); color: white; opacity: 0.7; cursor: not-allowed; }
 
-        #saved-powers-section { width: 100%; margin-top: 4rem; }
-        #saved-filters { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2rem; align-items: center; }
-        #search-saved { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; color: white; font-size: 1rem; }
+        #saved-powers-section, #saved-characters-section { width: 100%; margin-top: 4rem; }
+        #saved-filters, #character-filters { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2rem; align-items: center; }
+        #search-saved, #search-characters { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; color: white; font-size: 1rem; }
         .filter-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
         .filter-btn.active, .filter-btn:hover { color: white; background-color: var(--primary-glow); border-color: var(--primary-glow); }
 
-        #saved-powers-container, #arena-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-        .saved-power-card {
+        #saved-powers-container, #arena-container, #saved-characters-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .saved-power-card, .saved-character-card {
             background-color: var(--card-bg-color); backdrop-filter: blur(5px); border-radius: 8px; padding: 1rem;
             display: flex; justify-content: space-between; align-items: center; border-left: 4px solid;
             cursor: pointer; transition: all 0.3s ease; position: relative;
         }
-        .saved-power-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .saved-power-card:hover, .saved-character-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         #arena-container .saved-power-card.selected { box-shadow: 0 0 15px var(--secondary-glow); border-color: var(--secondary-glow); }
 
-        .saved-power-card .info { text-align: left; } .saved-power-card .name { font-weight: 600; font-size: 1.1rem; color: white; }
-        .saved-power-card .delete-btn {
+        .saved-power-card .info, .saved-character-card .info { text-align: left; } 
+        .saved-power-card .name, .saved-character-card .name { font-weight: 600; font-size: 1.1rem; color: white; }
+        .saved-power-card .delete-btn, .saved-character-card .delete-btn {
             position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; color: var(--text-muted);
             width: 28px; height: 28px; border-radius: 50%; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; z-index: 5;
         }
-        .saved-power-card:hover .delete-btn { background-color: var(--danger-color); color: white; }
+        .saved-power-card:hover .delete-btn, .saved-character-card:hover .delete-btn { background-color: var(--danger-color); color: white; }
         
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
@@ -140,7 +145,7 @@
         .footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 0.9rem; }
         
         /* Melhorias para a seção de poderes salvos */
-        .saved-powers-empty {
+        .saved-powers-empty, .saved-characters-empty {
             text-align: center;
             color: var(--text-muted);
             font-style: italic;
@@ -150,13 +155,13 @@
             margin-top: 2rem;
         }
         
-        .saved-power-card .tier-info {
+        .saved-power-card .tier-info, .saved-character-card .tier-info {
             font-size: 0.8rem;
             color: var(--text-muted);
             margin-top: 0.25rem;
         }
         
-        .saved-power-card .view-details-btn {
+        .saved-power-card .view-details-btn, .saved-character-card .view-details-btn {
             background-color: var(--primary-glow);
             color: white;
             border: none;
@@ -168,12 +173,98 @@
             margin-left: 1rem;
         }
         
-        .saved-power-card .view-details-btn:hover {
+        .saved-power-card .view-details-btn:hover, .saved-character-card .view-details-btn:hover {
             background-color: var(--secondary-glow);
             transform: scale(1.05);
         }
-        
-        @media (max-width: 900px) { #results-container { flex-direction: column; } }
+
+        /* Estilos para criação de personagem */
+        #character-creation-form {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--character-glow);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        #create-character-btn {
+            background-color: var(--character-glow);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        #create-character-btn:hover {
+            background-color: #d97706;
+            box-shadow: 0 0 20px var(--character-glow);
+        }
+
+        .saved-character-card {
+            border-left-color: var(--character-glow);
+        }
+
+        .character-class-badge {
+            background-color: var(--character-glow);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) { 
+            #results-container { flex-direction: column; } 
+            .form-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -184,6 +275,7 @@
         
         <div class="controls">
             <button id="view-toggle-btn" class="btn"><i class="fas fa-shield-alt"></i> Ir para Arena</button>
+            <button id="character-toggle-btn" class="btn"><i class="fas fa-user-plus"></i> Criar Personagem</button>
             <div class="theme-selector-wrapper">
                 <label for="theme-selector"><i class="fas fa-palette"></i> Tema:</label>
                 <select id="theme-selector"></select>
@@ -210,6 +302,75 @@
             </div>
         </div>
 
+        <div id="character-view" class="main-content hidden">
+            <h2>Criador de Personagens</h2>
+            <p class="subtitle">Crie personagens únicos para habitar o universo cósmico.</p>
+            
+            <form id="character-creation-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="character-name">Nome do Personagem</label>
+                        <input type="text" id="character-name" placeholder="Ex: Zara Nebulosa" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="character-class">Classe</label>
+                        <select id="character-class" required>
+                            <option value="">Selecione uma classe</option>
+                            <option value="Guardião Cósmico">Guardião Cósmico</option>
+                            <option value="Mago Arcano">Mago Arcano</option>
+                            <option value="Tecno-Guerreiro">Tecno-Guerreiro</option>
+                            <option value="Mutante Evolutivo">Mutante Evolutivo</option>
+                            <option value="Psíquico Transcendente">Psíquico Transcendente</option>
+                            <option value="Híbrido Dimensional">Híbrido Dimensional</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="character-origin">Origem</label>
+                        <input type="text" id="character-origin" placeholder="Ex: Planeta Kepler-442b">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-age">Idade</label>
+                        <input type="text" id="character-age" placeholder="Ex: 247 anos terrestres">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="character-appearance">Aparência</label>
+                    <textarea id="character-appearance" placeholder="Descreva a aparência física do personagem..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="character-personality">Personalidade</label>
+                    <textarea id="character-personality" placeholder="Descreva a personalidade, motivações e objetivos..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="character-backstory">História de Fundo</label>
+                    <textarea id="character-backstory" placeholder="Conte a história e o passado do personagem..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="character-power">Poder Principal</label>
+                        <select id="character-power">
+                            <option value="">Selecionar poder salvo (opcional)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="character-weakness">Fraqueza Principal</label>
+                        <input type="text" id="character-weakness" placeholder="Ex: Vulnerável à radiação solar">
+                    </div>
+                </div>
+
+                <button type="submit" id="create-character-btn">
+                    <i class="fas fa-user-plus"></i> Criar Personagem
+                </button>
+            </form>
+        </div>
+
         <section id="saved-powers-section">
             <h2>Poderes Salvos</h2>
             <div id="saved-filters">
@@ -218,6 +379,15 @@
             </div>
             <div id="saved-powers-container"></div>
         </section>
+
+        <section id="saved-characters-section">
+            <h2>Personagens Criados</h2>
+            <div id="character-filters">
+                <input type="search" id="search-characters" placeholder="Buscar personagens...">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+            </div>
+            <div id="saved-characters-container"></div>
+        </section>
     </div>
 
     <div id="main-modal" class="modal"><div class="modal-content" id="modal-content-area"></div></div>
@@ -225,7 +395,7 @@
     <footer class="footer"><p>&copy; 2025 Nexus Cósmico. O universo em suas mãos.</p></footer>
 
     <script>
-        // JAVASCRIPT COMPLETO COM MELHORIAS
+        // JAVASCRIPT COMPLETO COM FUNCIONALIDADE DE PERSONAGENS
         const allData = {
             cosmico: {
                 names: ["Singularidade Harmônica", "Nexo Gravitacional", "Coração da Supernova", "Eco do Vazio", "Coroa da Antimatéria", "Pulso de Nêutrons"],
@@ -337,20 +507,28 @@
         const battleBtn = document.getElementById('battle-btn');
         const arenaBattleBtn = document.getElementById('arena-battle-btn');
         const viewToggleBtn = document.getElementById('view-toggle-btn');
+        const characterToggleBtn = document.getElementById('character-toggle-btn');
         const themeSelector = document.getElementById('theme-selector');
         const resultsContainer = document.getElementById('results-container');
         const generatorView = document.getElementById('generator-view');
         const arenaView = document.getElementById('arena-view');
+        const characterView = document.getElementById('character-view');
         const savedPowersContainer = document.getElementById('saved-powers-container');
+        const savedCharactersContainer = document.getElementById('saved-characters-container');
         const arenaContainer = document.getElementById('arena-container');
         const searchInput = document.getElementById('search-saved');
+        const searchCharactersInput = document.getElementById('search-characters');
         const filterBtnContainer = document.getElementById('saved-filters');
+        const characterFilterBtnContainer = document.getElementById('character-filters');
         const mainModal = document.getElementById('main-modal');
         const modalContentArea = document.getElementById('modal-content-area');
+        const characterForm = document.getElementById('character-creation-form');
+        const characterPowerSelect = document.getElementById('character-power');
 
         // VARIÁVEIS GLOBAIS
         let currentlyGeneratedPowers = [null, null];
         let arenaCombatants = [];
+        let currentView = 'generator';
 
         // FUNÇÕES PRINCIPAIS
         function getRandomElement(array) { return array[Math.floor(Math.random() * array.length)]; }
@@ -455,6 +633,7 @@
             savedPowers.push(power);
             localStorage.setItem('savedCosmicPowers', JSON.stringify(savedPowers));
             renderSavedPowers();
+            updateCharacterPowerSelect();
         }
 
         function deletePower(powerId) {
@@ -465,6 +644,30 @@
             localStorage.setItem('savedCosmicPowers', JSON.stringify(filteredPowers));
             renderSavedPowers();
             renderArena();
+            updateCharacterPowerSelect();
+        }
+
+        function createCharacter(characterData) {
+            const character = {
+                id: Date.now() + Math.random(),
+                ...characterData,
+                createdAt: new Date().toISOString()
+            };
+
+            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
+            savedCharacters.push(character);
+            localStorage.setItem('savedCosmicCharacters', JSON.stringify(savedCharacters));
+            
+            return character;
+        }
+
+        function deleteCharacter(characterId) {
+            if (!confirm('Tem certeza que deseja excluir este personagem?')) return;
+            
+            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
+            const filteredCharacters = savedCharacters.filter(c => c.id != characterId);
+            localStorage.setItem('savedCosmicCharacters', JSON.stringify(filteredCharacters));
+            renderSavedCharacters();
         }
 
         function renderSavedPowers(searchTerm = '', filterTier = 'all') {
@@ -527,6 +730,66 @@
             }).join('');
         }
 
+        function renderSavedCharacters(searchTerm = '', filterClass = 'all') {
+            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
+            
+            if (savedCharacters.length === 0) {
+                savedCharactersContainer.innerHTML = `
+                    <div class="saved-characters-empty">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Nenhum personagem criado ainda.</p>
+                        <p>Use o Criador de Personagens para dar vida ao seu universo!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let filteredCharacters = savedCharacters;
+            
+            // Filtrar por busca
+            if (searchTerm) {
+                filteredCharacters = filteredCharacters.filter(character => 
+                    character.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    character.class.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            // Filtrar por classe
+            if (filterClass !== 'all') {
+                filteredCharacters = filteredCharacters.filter(character => character.class === filterClass);
+            }
+            
+            if (filteredCharacters.length === 0) {
+                savedCharactersContainer.innerHTML = `
+                    <div class="saved-characters-empty">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Nenhum personagem encontrado com os filtros aplicados.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            savedCharactersContainer.innerHTML = filteredCharacters.map(character => {
+                return `
+                    <div class="saved-character-card" data-id="${character.id}">
+                        <div class="info">
+                            <div class="name">${character.name}</div>
+                            <div class="tier-info">
+                                <span class="character-class-badge">${character.class}</span>
+                                <span style="margin-left: 0.5rem;">${character.origin || 'Origem desconhecida'}</span>
+                            </div>
+                        </div>
+                        <button class="view-details-btn">
+                            <i class="fas fa-eye"></i> Ver Detalhes
+                        </button>
+                        <button class="delete-btn" data-id="${character.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function renderArena() {
             const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
             
@@ -568,49 +831,114 @@
             }).join('');
         }
 
-        function showDetailModal(power) {
-            const tierInfo = tierConfig[power.tier];
+        function updateCharacterPowerSelect() {
+            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
             
-            modalContentArea.innerHTML = `
-                <span class="close-btn">&times;</span>
-                <div class="power-header">
-                    <h2 class="power-name">${power.name}</h2>
-                    <span class="tier-badge tier-${power.tier}">${tierInfo.name}</span>
-                    <div class="power-score">Pontuação Total: ${power.totalScore}</div>
-                </div>
+            characterPowerSelect.innerHTML = '<option value="">Selecionar poder salvo (opcional)</option>';
+            
+            savedPowers.forEach(power => {
+                const option = document.createElement('option');
+                option.value = power.id;
+                option.textContent = `${power.name} (${tierConfig[power.tier].name})`;
+                characterPowerSelect.appendChild(option);
+            });
+        }
+
+        function showDetailModal(item, type = 'power') {
+            if (type === 'power') {
+                const tierInfo = tierConfig[item.tier];
                 
-                <div class="power-narrative">
-                    <p><strong>Tema:</strong> ${power.theme.charAt(0).toUpperCase() + power.theme.slice(1)}</p>
-                    <p><strong>Origem:</strong> ${power.origin}</p>
-                    <p><strong>Consequência:</strong> ${power.consequence}</p>
-                </div>
+                modalContentArea.innerHTML = `
+                    <span class="close-btn">&times;</span>
+                    <div class="power-header">
+                        <h2 class="power-name">${item.name}</h2>
+                        <span class="tier-badge tier-${item.tier}">${tierInfo.name}</span>
+                        <div class="power-score">Pontuação Total: ${item.totalScore}</div>
+                    </div>
+                    
+                    <div class="power-narrative">
+                        <p><strong>Tema:</strong> ${item.theme.charAt(0).toUpperCase() + item.theme.slice(1)}</p>
+                        <p><strong>Origem:</strong> ${item.origin}</p>
+                        <p><strong>Consequência:</strong> ${item.consequence}</p>
+                    </div>
+                    
+                    <h3><i class="fas fa-magic"></i> Habilidades</h3>
+                    <ul>
+                        ${item.abilities.map(ability => `
+                            <li>
+                                <strong>${ability.name} (${ability.score})</strong>
+                                ${ability.description}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    
+                    <h3><i class="fas fa-exclamation-triangle"></i> Fraquezas</h3>
+                    <ul>
+                        ${item.weaknesses.map(weakness => `
+                            <li>
+                                <strong>${weakness.name} (${weakness.score})</strong>
+                                ${weakness.description}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    
+                    <div class="card-footer">
+                        <button class="action-icon share-btn" data-id="${item.id}">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                `;
+            } else if (type === 'character') {
+                const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
+                const characterPower = item.powerId ? savedPowers.find(p => p.id == item.powerId) : null;
                 
-                <h3><i class="fas fa-magic"></i> Habilidades</h3>
-                <ul>
-                    ${power.abilities.map(ability => `
-                        <li>
-                            <strong>${ability.name} (${ability.score})</strong>
-                            ${ability.description}
-                        </li>
-                    `).join('')}
-                </ul>
-                
-                <h3><i class="fas fa-exclamation-triangle"></i> Fraquezas</h3>
-                <ul>
-                    ${power.weaknesses.map(weakness => `
-                        <li>
-                            <strong>${weakness.name} (${weakness.score})</strong>
-                            ${weakness.description}
-                        </li>
-                    `).join('')}
-                </ul>
-                
-                <div class="card-footer">
-                    <button class="action-icon share-btn" data-id="${power.id}">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                </div>
-            `;
+                modalContentArea.innerHTML = `
+                    <span class="close-btn">&times;</span>
+                    <div class="power-header">
+                        <h2 class="power-name">${item.name}</h2>
+                        <span class="character-class-badge">${item.class}</span>
+                    </div>
+                    
+                    <div class="power-narrative">
+                        <p><strong>Origem:</strong> ${item.origin || 'Não especificada'}</p>
+                        <p><strong>Idade:</strong> ${item.age || 'Não especificada'}</p>
+                        ${item.weakness ? `<p><strong>Fraqueza Principal:</strong> ${item.weakness}</p>` : ''}
+                    </div>
+                    
+                    ${item.appearance ? `
+                        <h3><i class="fas fa-eye"></i> Aparência</h3>
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${item.appearance}
+                        </div>
+                    ` : ''}
+                    
+                    ${item.personality ? `
+                        <h3><i class="fas fa-heart"></i> Personalidade</h3>
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${item.personality}
+                        </div>
+                    ` : ''}
+                    
+                    ${item.backstory ? `
+                        <h3><i class="fas fa-book"></i> História de Fundo</h3>
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            ${item.backstory}
+                        </div>
+                    ` : ''}
+                    
+                    ${characterPower ? `
+                        <h3><i class="fas fa-magic"></i> Poder Principal</h3>
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <strong>${characterPower.name}</strong> (${tierConfig[characterPower.tier].name})<br>
+                            ${characterPower.origin}
+                        </div>
+                    ` : ''}
+                    
+                    <div style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                        Criado em: ${new Date(item.createdAt).toLocaleDateString('pt-BR')}
+                    </div>
+                `;
+            }
             
             mainModal.classList.add('visible');
         }
@@ -758,6 +1086,49 @@
             });
         }
 
+        function populateCharacterFilterButtons() {
+            const classes = ['Guardião Cósmico', 'Mago Arcano', 'Tecno-Guerreiro', 'Mutante Evolutivo', 'Psíquico Transcendente', 'Híbrido Dimensional'];
+            
+            classes.forEach(className => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.filter = className;
+                btn.textContent = className;
+                characterFilterBtnContainer.appendChild(btn);
+            });
+        }
+
+        function switchView(newView) {
+            // Esconder todas as views
+            generatorView.classList.add('hidden');
+            arenaView.classList.add('hidden');
+            characterView.classList.add('hidden');
+            
+            // Mostrar a view selecionada
+            switch(newView) {
+                case 'generator':
+                    generatorView.classList.remove('hidden');
+                    viewToggleBtn.innerHTML = `<i class="fas fa-shield-alt"></i> Ir para Arena`;
+                    characterToggleBtn.innerHTML = `<i class="fas fa-user-plus"></i> Criar Personagem`;
+                    break;
+                case 'arena':
+                    arenaView.classList.remove('hidden');
+                    viewToggleBtn.innerHTML = `<i class="fas fa-dice-d20"></i> Voltar ao Gerador`;
+                    characterToggleBtn.innerHTML = `<i class="fas fa-user-plus"></i> Criar Personagem`;
+                    renderArena();
+                    arenaCombatants = [];
+                    arenaBattleBtn.disabled = true;
+                    break;
+                case 'character':
+                    characterView.classList.remove('hidden');
+                    viewToggleBtn.innerHTML = `<i class="fas fa-shield-alt"></i> Ir para Arena`;
+                    characterToggleBtn.innerHTML = `<i class="fas fa-dice-d20"></i> Voltar ao Gerador`;
+                    break;
+            }
+            
+            currentView = newView;
+        }
+
         // EVENT LISTENERS
         generateBtn.addEventListener('click', () => {
             currentlyGeneratedPowers[0] = createSinglePower();
@@ -776,15 +1147,18 @@
         });
         
         viewToggleBtn.addEventListener('click', () => {
-            generatorView.classList.toggle('hidden');
-            arenaView.classList.toggle('hidden');
-            if (!arenaView.classList.contains('hidden')) {
-                viewToggleBtn.innerHTML = `<i class="fas fa-dice-d20"></i> Voltar ao Gerador`;
-                renderArena();
-                arenaCombatants = [];
-                arenaBattleBtn.disabled = true;
+            if (currentView === 'generator') {
+                switchView('arena');
             } else {
-                viewToggleBtn.innerHTML = `<i class="fas fa-shield-alt"></i> Ir para Arena`;
+                switchView('generator');
+            }
+        });
+
+        characterToggleBtn.addEventListener('click', () => {
+            if (currentView === 'character') {
+                switchView('generator');
+            } else {
+                switchView('character');
             }
         });
         
@@ -792,6 +1166,31 @@
             if (event.target === mainModal || event.target.closest('.close-btn')) {
                 mainModal.classList.remove('visible');
             }
+        });
+
+        characterForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(characterForm);
+            const characterData = {
+                name: document.getElementById('character-name').value,
+                class: document.getElementById('character-class').value,
+                origin: document.getElementById('character-origin').value,
+                age: document.getElementById('character-age').value,
+                appearance: document.getElementById('character-appearance').value,
+                personality: document.getElementById('character-personality').value,
+                backstory: document.getElementById('character-backstory').value,
+                powerId: document.getElementById('character-power').value || null,
+                weakness: document.getElementById('character-weakness').value
+            };
+            
+            const newCharacter = createCharacter(characterData);
+            renderSavedCharacters();
+            
+            // Limpar formulário
+            characterForm.reset();
+            
+            alert(`Personagem "${newCharacter.name}" criado com sucesso!`);
         });
 
         document.addEventListener('click', (event) => {
@@ -831,7 +1230,7 @@
                 const card = viewDetailsBtn.closest('.saved-power-card');
                 const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
                 const power = savedPowers.find(p => p.id == card.dataset.id);
-                if (power) showDetailModal(power);
+                if (power) showDetailModal(power, 'power');
                 return;
             }
             
@@ -839,7 +1238,33 @@
             if (card) {
                 const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
                 const power = savedPowers.find(p => p.id == card.dataset.id);
-                if (power) showDetailModal(power);
+                if (power) showDetailModal(power, 'power');
+            }
+        });
+
+        savedCharactersContainer.addEventListener('click', (event) => {
+            const deleteBtn = event.target.closest('.delete-btn');
+            if (deleteBtn) {
+                event.stopPropagation();
+                deleteCharacter(deleteBtn.dataset.id);
+                return;
+            }
+            
+            const viewDetailsBtn = event.target.closest('.view-details-btn');
+            if (viewDetailsBtn) {
+                event.stopPropagation();
+                const card = viewDetailsBtn.closest('.saved-character-card');
+                const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
+                const character = savedCharacters.find(c => c.id == card.dataset.id);
+                if (character) showDetailModal(character, 'character');
+                return;
+            }
+            
+            const card = event.target.closest('.saved-character-card');
+            if (card) {
+                const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
+                const character = savedCharacters.find(c => c.id == card.dataset.id);
+                if (character) showDetailModal(character, 'character');
             }
         });
         
@@ -864,14 +1289,26 @@
         });
         
         searchInput.addEventListener('input', () => {
-            renderSavedPowers(searchInput.value, document.querySelector('.filter-btn.active').dataset.filter);
+            renderSavedPowers(searchInput.value, document.querySelector('#saved-filters .filter-btn.active').dataset.filter);
+        });
+
+        searchCharactersInput.addEventListener('input', () => {
+            renderSavedCharacters(searchCharactersInput.value, document.querySelector('#character-filters .filter-btn.active').dataset.filter);
         });
         
         filterBtnContainer.addEventListener('click', (event) => {
             if (event.target.classList.contains('filter-btn')) {
-                document.querySelector('.filter-btn.active').classList.remove('active');
+                document.querySelector('#saved-filters .filter-btn.active').classList.remove('active');
                 event.target.classList.add('active');
                 renderSavedPowers(searchInput.value, event.target.dataset.filter);
+            }
+        });
+
+        characterFilterBtnContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('filter-btn')) {
+                document.querySelector('#character-filters .filter-btn.active').classList.remove('active');
+                event.target.classList.add('active');
+                renderSavedCharacters(searchCharactersInput.value, event.target.dataset.filter);
             }
         });
 
@@ -879,7 +1316,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateThemeSelector();
             populateFilterButtons();
+            populateCharacterFilterButtons();
             renderSavedPowers();
+            renderSavedCharacters();
+            updateCharacterPowerSelect();
         });
 
     </script>
