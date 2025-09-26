@@ -3,1326 +3,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Cósmico - Gerador de Poderes e Personagens</title>
-    
+    <title>Universo de Poderes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0d0f18; --card-bg-color: rgba(23, 22, 36, 0.7); --primary-glow: #7b2cbf;
-            --secondary-glow: #2c73bf; --text-color: #e2e8f0; --text-muted: #94a3b8;
-            --border-color: rgba(123, 44, 191, 0.3); --success-color: #10b981; --danger-color: #ef4444;
-            --character-glow: #f59e0b;
+            --bg-color: #1a1a2e; --surface-color: #2a2a4e; --primary-color: #00ffff;
+            --secondary-color: #ff00ff; --text-color: #e0e0ff; --text-muted: #8c8ca0;
+            --border-color: #4a4a7f; --glow-color: rgba(0, 255, 255, 0.5);
+            --font-display: 'Roboto Condensed', sans-serif; --font-mono: 'Share Tech Mono', monospace;
+            --xp-color: #FFC107; --danger-color: #ff453a; --success-color: #00ff88;
         }
-
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body {
-            font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            margin: 0; padding: 2rem; overflow-x: hidden; position: relative;
-        }
-
-        body::before {
-            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background-image: 
-                radial-gradient(circle at 20% 20%, var(--primary-glow), transparent 30%),
-                radial-gradient(circle at 80% 70%, var(--secondary-glow), transparent 30%);
-            background-color: var(--bg-color); will-change: transform; z-index: -1;
-            animation: gradient-move 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes gradient-move { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(10%, 20%) rotate(10deg); } }
-
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 {
-            font-family: 'Orbitron', sans-serif; color: white; font-size: 3rem; letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--primary-glow), 0 0 20px var(--primary-glow); margin: 0;
-        }
-
-        .container { width: 100%; max-width: 1400px; margin: 0 auto; text-align: center; }
-        p.subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2.5rem; }
-        
-        .controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; }
-        .btn {
-            font-family: 'Orbitron', sans-serif; color: white; border: 1px solid transparent; padding: 12px 24px;
-            font-size: 1rem; border-radius: 50px; cursor: pointer; transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);
-        }
-        #generate-btn { border-color: var(--primary-glow); } #generate-btn:hover { background-color: var(--primary-glow); box-shadow: 0 0 20px var(--primary-glow); }
-        #battle-btn, #arena-battle-btn { border-color: #f9d423; display: none; } #battle-btn:hover, #arena-battle-btn:hover { background-color: #f9d423; box-shadow: 0 0 20px #f9d423; }
-        #arena-battle-btn { margin-top: 1.5rem; }
-        #arena-battle-btn:disabled { cursor: not-allowed; opacity: 0.5; }
-        #view-toggle-btn, #character-toggle-btn { border-color: var(--text-muted); } 
-        #view-toggle-btn:hover, #character-toggle-btn:hover { background-color: var(--text-muted); color: var(--bg-color); }
-        #character-toggle-btn { border-color: var(--character-glow); }
-        #character-toggle-btn:hover { background-color: var(--character-glow); color: var(--bg-color); }
-        
-        .theme-selector-wrapper { display: flex; align-items: center; gap: 0.5rem; }
-        #theme-selector {
-            font-family: 'Poppins', sans-serif; background-color: transparent; color: var(--text-color);
-            border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; font-size: 1rem; cursor: pointer;
-        }
-        #theme-selector option { background-color: var(--bg-color); color: var(--text-color); }
-
-        .main-content { display: block; } .main-content.hidden { display: none; }
-        #results-container { display: flex; gap: 2rem; justify-content: center; align-items: stretch; width: 100%; }
-        .power-card {
-            background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 16px;
-            padding: 1.5rem 2rem 2rem 2rem; text-align: left; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            flex: 1; display: flex; flex-direction: column; backdrop-filter: blur(10px);
-        }
-        .power-header { text-align: center; margin-bottom: 1.5rem; position: relative; }
-        .power-name { font-family: 'Orbitron', sans-serif; color: white; margin: 0 0 0.5rem 0; font-size: 1.8rem; }
-        .power-narrative { border-left: 3px solid var(--primary-glow); padding-left: 1rem; margin-bottom: 1rem; }
-        .power-narrative p { margin: 0.5rem 0; text-align: left; line-height: 1.6; }
-        .power-narrative strong { color: white; }
-        
-        .tier-badge { display: inline-block; font-family: 'Orbitron', sans-serif; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; color: white; font-weight: bold; }
-        .tier-extremo { background-color: #ef4444; box-shadow: 0 0 10px #ef4444; } .tier-cosmico { background-color: #a855f7; box-shadow: 0 0 10px #a855f7; }
-        .tier-elevado { background-color: #3b82f6; box-shadow: 0 0 10px #3b82f6; } .tier-controlavel { background-color: #06b6d4; box-shadow: 0 0 10px #06b6d4; }
-        .tier-baixo { background-color: #22c55e; box-shadow: 0 0 10px #22c55e; }
-        .power-score { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem; font-weight: bold; }
-
-        h3 { font-family: 'Orbitron', sans-serif; color: white; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; }
-        ul { list-style: none; padding: 0; }
-        li { background-color: rgba(0,0,0,0.2); padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; line-height: 1.5; }
-        li strong { color: white; display: block; margin-bottom: 0.25rem; font-weight: 600; }
-
-        .card-footer { margin-top: auto; padding-top: 1.5rem; text-align: center; }
-        .action-icon { background-color: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: all 0.3s; margin: 0 0.5rem; }
-        .action-icon:hover { color: white; }
-        .action-icon.save-btn:hover { border-color: var(--success-color); background-color: var(--success-color); }
-        .action-icon.share-btn:hover { border-color: var(--secondary-glow); background-color: var(--secondary-glow); }
-        .save-btn:disabled { background-color: var(--success-color); color: white; opacity: 0.7; cursor: not-allowed; }
-
-        #saved-powers-section, #saved-characters-section { width: 100%; margin-top: 4rem; }
-        #saved-filters, #character-filters { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2rem; align-items: center; }
-        #search-saved, #search-characters { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; color: white; font-size: 1rem; }
-        .filter-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
-        .filter-btn.active, .filter-btn:hover { color: white; background-color: var(--primary-glow); border-color: var(--primary-glow); }
-
-        #saved-powers-container, #arena-container, #saved-characters-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-        .saved-power-card, .saved-character-card {
-            background-color: var(--card-bg-color); backdrop-filter: blur(5px); border-radius: 8px; padding: 1rem;
-            display: flex; justify-content: space-between; align-items: center; border-left: 4px solid;
-            cursor: pointer; transition: all 0.3s ease; position: relative;
-        }
-        .saved-power-card:hover, .saved-character-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        #arena-container .saved-power-card.selected { box-shadow: 0 0 15px var(--secondary-glow); border-color: var(--secondary-glow); }
-
-        .saved-power-card .info, .saved-character-card .info { text-align: left; } 
-        .saved-power-card .name, .saved-character-card .name { font-weight: 600; font-size: 1.1rem; color: white; }
-        .saved-power-card .delete-btn, .saved-character-card .delete-btn {
-            position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; color: var(--text-muted);
-            width: 28px; height: 28px; border-radius: 50%; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; z-index: 5;
-        }
-        .saved-power-card:hover .delete-btn, .saved-character-card:hover .delete-btn { background-color: var(--danger-color); color: white; }
-        
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .modal.visible { display: flex; opacity: 1; }
-        .modal-content {
-            background-color: var(--card-bg-color); margin: auto; padding: 2rem; border: 1px solid var(--border-color);
-            width: 90%; max-width: 800px; border-radius: 16px; text-align: center; position: relative;
-            transform: scale(0.95); transition: transform 0.3s ease; max-height: 90vh; overflow-y: auto;
-        }
-        .modal.visible .modal-content { transform: scale(1); }
-        .close-btn { color: #aaa; position: absolute; top: 1rem; right: 1.5rem; font-size: 28px; font-weight: bold; cursor: pointer; }
-        
-        #battle-log-container { text-align: left; margin-top: 2rem; }
-        #battle-log-container h3 { margin-top: 0; }
-        #battle-log-list { list-style: none; padding: 0; }
-        #battle-log-list li { margin-bottom: 1rem; padding-left: 1.5rem; border-left: 3px solid var(--border-color); }
-        #battle-log-list li strong { font-family: 'Orbitron'; font-size: 1.1rem; }
-        
-        .placeholder-text { color: var(--text-muted); font-style: italic; align-self: center; margin-top: 4rem; }
-        .footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 0.9rem; }
-        
-        /* Melhorias para a seção de poderes salvos */
-        .saved-powers-empty, .saved-characters-empty {
-            text-align: center;
-            color: var(--text-muted);
-            font-style: italic;
-            padding: 3rem;
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            margin-top: 2rem;
-        }
-        
-        .saved-power-card .tier-info, .saved-character-card .tier-info {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-        
-        .saved-power-card .view-details-btn, .saved-character-card .view-details-btn {
-            background-color: var(--primary-glow);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-        }
-        
-        .saved-power-card .view-details-btn:hover, .saved-character-card .view-details-btn:hover {
-            background-color: var(--secondary-glow);
-            transform: scale(1.05);
-        }
-
-        /* Estilos para criação de personagem */
-        #character-creation-form {
-            background-color: var(--card-bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: left;
-            backdrop-filter: blur(10px);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: white;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.3);
-            color: var(--text-color);
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--character-glow);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        #create-character-btn {
-            background-color: var(--character-glow);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        #create-character-btn:hover {
-            background-color: #d97706;
-            box-shadow: 0 0 20px var(--character-glow);
-        }
-
-        .saved-character-card {
-            border-left-color: var(--character-glow);
-        }
-
-        .character-class-badge {
-            background-color: var(--character-glow);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        @media (max-width: 900px) { 
-            #results-container { flex-direction: column; } 
-            .form-row { grid-template-columns: 1fr; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-mono); background-color: var(--bg-color); color: var(--text-color); padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 1400px; }
+        .btn { font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; padding: 0.7rem 1.2rem; border: 2px solid var(--primary-color); border-radius: 4px; background-color: transparent; color: var(--primary-color); cursor: pointer; transition: all 0.2s; box-shadow: 0 0 8px var(--glow-color); }
+        .btn:hover { background-color: var(--primary-color); color: var(--bg-color); }
+        .btn:disabled { border-color: var(--text-muted); color: var(--text-muted); box-shadow: none; cursor: not-allowed; }
+        header { text-align: center; margin-bottom: 1.5rem; }
+        header h1 { font-family: var(--font-display); font-size: 2.5rem; text-transform: uppercase; color: var(--primary-color); text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--secondary-color); }
+        .main-controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1rem; background-color: var(--surface-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border-color); }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .control-group label { font-size: 0.8rem; text-align: center; color: var(--text-muted); }
+        .control-group select { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem; font-family: var(--font-mono); }
+        .battle-arena { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: flex-start; }
+        .power-slot { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; min-height: 580px; display: flex; flex-direction: column; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .power-card { display: none; flex-direction: column; gap: 1rem; flex-grow: 1; }
+        .power-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem; }
+        .power-name { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; line-height: 1.2; margin-bottom: 0.5rem; }
+        .power-level { font-size: 2.5rem; font-weight: bold; flex-shrink: 0; margin-left: 1rem; text-shadow: 0 0 5px var(--secondary-color); }
+        .power-rarity { font-size: 1rem; font-weight: bold; padding: 5px 10px; border-radius: 4px; }
+        .power-card h3 { font-family: var(--font-display); text-transform: uppercase; font-size: 1.2rem; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin: 1rem 0 0.5rem 0; }
+        .power-card ul { list-style: none; padding-left: 0; } .power-card ul li { margin-bottom: 0.5rem; line-height: 1.4; }
+        .abilities-list li::before { content: '✓ '; color: var(--success-color); } .weaknesses-list li::before { content: '✗ '; color: var(--danger-color); }
+        .power-actions { display: flex; gap: 1rem; margin-top: auto; }
+        #battle-btn { border-color: var(--secondary-color); color: var(--secondary-color); box-shadow: 0 0 10px var(--secondary-color); }
+        #battle-result { margin-top: 2rem; text-align: center; font-size: 1.2rem; font-family: var(--font-mono); min-height: 100px; line-height: 1.6; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; white-space: pre-wrap; }
+        .rarity-comum { background-color: #9E9E9E; color: #111; } .rarity-incomum { background-color: #4CAF50; color: #fff; } .rarity-raro { background-color: #2196F3; color: #fff; } .rarity-epico { background-color: #9C27B0; color: #fff; } .rarity-lendario { background-color: #FFC107; color: #111; } .rarity-mitico { border: 2px solid #fff; background: linear-gradient(45deg, #ff00ff, #00ffff); color: #fff; }
+        .rarity-transcendente { border: 2px solid #FFC107; background: linear-gradient(45deg, #f0f0ff, #c0c0ff); color: #000; }
+        .rarity-divino { border: 2px solid #fff; background: radial-gradient(circle, #fff, #FFD700, #ff00ff, #00ffff); color: #000; animation: divino-glow 3s ease-in-out infinite alternate; }
+        @keyframes divino-glow { from { box-shadow: 0 0 10px #fff, 0 0 20px #FFD700; } to { box-shadow: 0 0 20px #00ffff, 0 0 30px #ff00ff; } }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal-overlay.visible { display: flex; }
+        .modal-content { background-color: var(--surface-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .modal-body { overflow-y: auto; padding-right: 1rem; }
+        .modal-close { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        .gallery-filters { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; } .gallery-filters input, .gallery-filters select { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem; font-family: var(--font-mono); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1rem; }
+        .gallery-card { background-color: var(--bg-color); padding: 1rem; border-radius: 4px; border-left: 4px solid var(--primary-color); }
+        .gallery-card-header { display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .gallery-card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; } .gallery-card-actions button { font-size: 0.8rem; padding: 0.3rem 0.6rem; border-width: 1px; }
+        .xp-bar { width: 100%; height: 8px; background-color: #111; border-radius: 4px; overflow: hidden; margin: 0.5rem 0; }
+        .xp-bar-fill { height: 100%; background-color: var(--xp-color); border-radius: 4px; transition: width 0.5s; }
+        .character-sheet, .skill-tree, .encyclopedia-content, .item-display { display: flex; flex-direction: column; gap: 1rem; }
+        .character-sheet h2, .skill-tree h2, .encyclopedia-content h2 { color: var(--primary-color); }
+        .skill-choice { background-color: var(--bg-color); padding: 1rem; border-radius: 4px; margin-bottom: 0.5rem; cursor: pointer; border: 1px solid var(--border-color); }
+        .skill-choice:hover { border-color: var(--primary-color); }
+        .skill-choice.disabled { opacity: 0.5; cursor: not-allowed; }
+        .encyclopedia-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; } .encyclopedia-tabs button { flex-grow: 1; }
+        .item-card { background-color: var(--bg-color); padding: 1rem; border-radius: 4px; text-align: center; }
+        #mission-log { background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 4px; margin-top: 1rem; }
+        @media (max-width: 900px) { body { padding: 1rem; } .battle-arena { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <header class="header"><h1>NEXUS CÓSMICO</h1></header>
-
     <div class="container">
-        <p class="subtitle">Forje, salve e simule batalhas entre forças de múltiplos universos.</p>
-        
-        <div class="controls">
-            <button id="view-toggle-btn" class="btn"><i class="fas fa-shield-alt"></i> Ir para Arena</button>
-            <button id="character-toggle-btn" class="btn"><i class="fas fa-user-plus"></i> Criar Personagem</button>
-            <div class="theme-selector-wrapper">
-                <label for="theme-selector"><i class="fas fa-palette"></i> Tema:</label>
-                <select id="theme-selector"></select>
-            </div>
-            <button id="generate-btn" class="btn"><i class="fas fa-dice-d20"></i> Gerar Poderes</button>
+        <header><h1>Universo de Poderes</h1></header>
+        <div class="main-controls">
+            <div class="control-group"><label for="rarity-filter">Filtrar Raridade</label><select id="rarity-filter"><option value="any">Qualquer</option></select></div>
+            <div class="control-group"><label for="domain-filter">Filtrar Domínio</label><select id="domain-filter"><option value="any">Qualquer</option></select></div>
+            <button class="btn" id="generate-filtered-btn">Gerar para A</button>
+            <button class="btn" data-action="open-gallery">Poderes Salvos</button>
+            <button class="btn" data-action="open-encyclopedia">Enciclopédia</button>
+            <button class="btn" data-action="export-gallery">Exportar</button>
+            <button class="btn" data-action="import-gallery">Importar</button>
+            <input type="file" id="import-file-input" style="display: none;" accept="application/json">
         </div>
-
-        <div id="generator-view" class="main-content">
-            <div id="battle-btn-container" class="action-buttons">
-                <button id="battle-btn" class="btn"><i class="fas fa-khanda"></i> Batalhar Gerados</button>
-            </div>
-            <div id="results-container">
-                <div class="power-card" id="power-card-1"><p class="placeholder-text">Aguardando a manifestação do primeiro poder...</p></div>
-                <div class="power-card" id="power-card-2"><p class="placeholder-text">O segundo poder aguarda o chamado do vácuo...</p></div>
-            </div>
+        <div class="battle-arena">
+            <div class="power-slot" id="power-a"><div class="power-card"><div class="power-header"><div><div class="power-name"></div><div class="power-type-tag"></div><div class="power-rarity"></div></div><div class="power-level"></div></div><p class="power-description"></p><div><h3>Habilidades</h3><ul class="abilities-list"></ul></div><div><h3>Fraquezas</h3><ul class="weaknesses-list"></ul></div></div><div class="power-actions"><button class="btn" data-action="save-power" data-slot="a" style="display:none;">Salvar</button><button class="btn" data-action="share-power" data-slot="a" style="display:none;">Compartilhar</button><button class="btn generate-btn" data-slot="a">Gerar Aleatório</button></div></div>
+            <div class="battle-controls"><button class="btn" id="battle-btn" disabled>Batalhar!</button></div>
+            <div class="power-slot" id="power-b"><div class="power-card"><div class="power-header"><div><div class="power-name"></div><div class="power-type-tag"></div><div class="power-rarity"></div></div><div class="power-level"></div></div><p class="power-description"></p><div><h3>Habilidades</h3><ul class="abilities-list"></ul></div><div><h3>Fraquezas</h3><ul class="weaknesses-list"></ul></div></div><div class="power-actions"><button class="btn" data-action="save-power" data-slot="b" style="display:none;">Salvar</button><button class="btn" data-action="share-power" data-slot="b" style="display:none;">Compartilhar</button><button class="btn generate-btn" data-slot="b">Gerar Aleatório</button></div></div>
         </div>
-
-        <div id="arena-view" class="main-content hidden">
-            <h2>Arena dos Salvos</h2>
-            <p class="subtitle">Selecione dois dos seus poderes salvos para um confronto épico.</p>
-            <div id="arena-container"></div>
-            <div class="action-buttons">
-                <button id="arena-battle-btn" class="btn" disabled><i class="fas fa-khanda"></i> Iniciar Batalha na Arena</button>
-            </div>
+        <div class="battle-result" id="battle-result"></div>
+        <div class="battle-controls-extra" style="display: none; text-align: center; margin-top: 1rem; gap: 1rem;">
+            <button class="btn" id="detailed-log-btn">Ver Log Detalhado</button>
+            <button class="btn" id="share-battle-btn">Compartilhar Resultado</button>
         </div>
-
-        <div id="character-view" class="main-content hidden">
-            <h2>Criador de Personagens</h2>
-            <p class="subtitle">Crie personagens únicos para habitar o universo cósmico.</p>
-            
-            <form id="character-creation-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="character-name">Nome do Personagem</label>
-                        <input type="text" id="character-name" placeholder="Ex: Zara Nebulosa" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="character-class">Classe</label>
-                        <select id="character-class" required>
-                            <option value="">Selecione uma classe</option>
-                            <option value="Guardião Cósmico">Guardião Cósmico</option>
-                            <option value="Mago Arcano">Mago Arcano</option>
-                            <option value="Tecno-Guerreiro">Tecno-Guerreiro</option>
-                            <option value="Mutante Evolutivo">Mutante Evolutivo</option>
-                            <option value="Psíquico Transcendente">Psíquico Transcendente</option>
-                            <option value="Híbrido Dimensional">Híbrido Dimensional</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="character-origin">Origem</label>
-                        <input type="text" id="character-origin" placeholder="Ex: Planeta Kepler-442b">
-                    </div>
-                    <div class="form-group">
-                        <label for="character-age">Idade</label>
-                        <input type="text" id="character-age" placeholder="Ex: 247 anos terrestres">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="character-appearance">Aparência</label>
-                    <textarea id="character-appearance" placeholder="Descreva a aparência física do personagem..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="character-personality">Personalidade</label>
-                    <textarea id="character-personality" placeholder="Descreva a personalidade, motivações e objetivos..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="character-backstory">História de Fundo</label>
-                    <textarea id="character-backstory" placeholder="Conte a história e o passado do personagem..."></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="character-power">Poder Principal</label>
-                        <select id="character-power">
-                            <option value="">Selecionar poder salvo (opcional)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="character-weakness">Fraqueza Principal</label>
-                        <input type="text" id="character-weakness" placeholder="Ex: Vulnerável à radiação solar">
-                    </div>
-                </div>
-
-                <button type="submit" id="create-character-btn">
-                    <i class="fas fa-user-plus"></i> Criar Personagem
-                </button>
-            </form>
-        </div>
-
-        <section id="saved-powers-section">
-            <h2>Poderes Salvos</h2>
-            <div id="saved-filters">
-                <input type="search" id="search-saved" placeholder="Buscar pelo nome...">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-            </div>
-            <div id="saved-powers-container"></div>
-        </section>
-
-        <section id="saved-characters-section">
-            <h2>Personagens Criados</h2>
-            <div id="character-filters">
-                <input type="search" id="search-characters" placeholder="Buscar personagens...">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-            </div>
-            <div id="saved-characters-container"></div>
-        </section>
     </div>
-
-    <div id="main-modal" class="modal"><div class="modal-content" id="modal-content-area"></div></div>
-
-    <footer class="footer"><p>&copy; 2025 Nexus Cósmico. O universo em suas mãos.</p></footer>
+    
+    <div id="gallery-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>Galeria de Poderes Salvos</h2><div class="gallery-filters"><input type="search" id="gallery-search" placeholder="Buscar salvo..."><select id="gallery-sort"><option value="date">Mais Recentes</option><option value="level">Maior Nível</option></select></div><button class="modal-close" data-action="close-modal">&times;</button></div><div id="gallery-grid" class="gallery-grid modal-body"></div></div></div>
+    <div id="character-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>Perfil do Portador</h2><button class="modal-close" data-action="close-modal">&times;</button></div><div id="character-sheet" class="character-sheet modal-body"></div></div></div>
+    <div id="evolution-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>Árvore de Evolução</h2><button class="modal-close" data-action="close-modal">&times;</button></div><div id="skill-tree" class="skill-tree modal-body"></div></div></div>
+    <div id="encyclopedia-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>Enciclopédia</h2><button class="modal-close" data-action="close-modal">&times;</button></div><div class="encyclopedia-tabs"></div><div id="encyclopedia-content" class="encyclopedia-content modal-body"></div></div></div>
+    <div id="item-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>Equipamento</h2><button class="modal-close" data-action="close-modal">&times;</button></div><div id="item-display" class="item-display modal-body"></div></div></div>
 
     <script>
-        // JAVASCRIPT COMPLETO COM FUNCIONALIDADE DE PERSONAGENS
-        const allData = {
-            cosmico: {
-                names: ["Singularidade Harmônica", "Nexo Gravitacional", "Coração da Supernova", "Eco do Vazio", "Coroa da Antimatéria", "Pulso de Nêutrons"],
-                origins: ["Nascido do colapso de uma estrela massiva, este poder concede domínio sobre as forças que regem massa e espaço.", "O portador se torna um canal para a energia do vácuo, a força primordial que existe entre as galáxias.", "Fragmento senciente do Big Bang, este poder permite reescrever as leis da física em uma área limitada.", "Esta força é a manifestação da entropia controlada, capaz de acelerar ou reverter o decaimento do universo."],
-                consequences: ["Seu uso constante deixa ecos no espaço-tempo, atraindo a atenção de entidades extradimensionais.", "O portador lentamente se desassocia da realidade física, tornando-se mais uma ideia do que um ser.", "A cada uso, uma pequena parte da realidade é permanentemente 'gasta', com efeitos imprevisíveis a longo prazo.", "O usuário ouve constantemente os sussurros de futuros possíveis e passados desfeitos, beirando a insanidade."],
-                abilities: [
-                    { name: "Manipulação Gravitacional", description: "Altera a atração de objetos, criando poços de gravidade ou anular o peso.", score: 9, tags: ['fisica', 'controle', 'ofensiva'] },
-                    { name: "Dobra da Realidade Local", description: "Reescreve as leis da física em uma área, fazendo o fogo congelar ou o espaço se curvar.", score: 10, tags: ['realidade', 'controle', 'defensiva'] },
-                    { name: "Explosão de Supernova", description: "Libera uma explosão de energia com o poder de uma estrela em colapso.", score: 10, tags: ['energia', 'ofensiva', 'area'] },
-                    { name: "Imunidade Temporal", description: "Existe fora do fluxo normal do tempo, imune a paradoxos e alterações temporais.", score: 8, tags: ['temporal', 'defensiva', 'passiva'] },
-                    { name: "Criação de Matéria do Vácuo", description: "Manifesta construtos de matéria e energia a partir do nada.", score: 8, tags: ['materia', 'criação', 'versatil'] },
-                    { name: "Controle sobre Matéria Escura", description: "Manipula a matéria escura para criar campos de força impenetráveis ou se tornar indetectável.", score: 7, tags: ['materia', 'defensiva', 'furtiva'] }
-                ],
-                weaknesses: [
-                    { name: "Vulnerabilidade a Caos", description: "Energias imprevisíveis corrompem o controle do portador, tornando seus poderes perigosos.", score: -8, tags: ['vulnerabilidade_caos'] },
-                    { name: "Ancora Mortal", description: "Possui uma conexão com um objeto ou pessoa mortal. Se a âncora for destruída, o poder enfraquece drasticamente.", score: -9, tags: ['vulnerabilidade_psicologica'] },
-                    { name: "Atração de Entidades", description: "O uso do poder emite uma 'assinatura', atraindo a atenção de predadores cósmicos.", score: -7, tags: ['passiva_negativa'] },
-                    { name: "Vulnerabilidade ao Vácuo Absoluto", description: "Em uma zona de 'ponto nulo', sem energia ou vibrações, o poder se torna inerte.", score: -9, tags: ['vulnerabilidade_ambiental'] }
-                ]
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- BANCO DE DADOS INTERNO ---
+        const rarities = { comum: { name: 'Comum', score: 1, weight: 40 }, incomum: { name: 'Incomum', score: 2, weight: 30 }, raro: { name: 'Raro', score: 4, weight: 15 }, epico: { name: 'Épico', score: 8, weight: 9 }, lendario: { name: 'Lendário', score: 16, weight: 4 }, mitico: { name: 'Mítico', score: 32, weight: 1.5 }, transcendente: { name: 'Transcendente', score: 50, weight: 0.4 }, divino: { name: 'Divino', score: 100, weight: 0.1 } };
+        const levels = { E: { name: 'E', score: 1 }, D: { name: 'D', score: 2 }, C: { name: 'C', score: 4 }, B: { name: 'B', score: 8 }, A: { name: 'A', score: 16 }, S: { name: 'S', score: 32 }, 'S+': { name: 'S+', score: 48 }, SS: { name: 'SS', score: 64 }, 'SS+': { name: 'SS+', score: 96 }, SSS: { name: 'SSS', score: 128 }, 'SSS+': { name: 'SSS+', score: 192 }, UR: { name: 'UR', score: 256 }, 'UR+': { name: 'UR+', score: 384 }, EX: { name: 'EX', score: 512 } };
+        const domains = {
+            fogo: { name: 'Fogo', names: ['Pirocinese', 'Coração de Magma', 'Ira do Dragão'], advantage: 'natureza', abilities: ['Gerar chamas intensas', 'Manto de fogo protetor', 'Absorver calor', 'Disparar jatos de plasma', 'Explosões de Fogo'], weaknesses: ['Vulnerável à água e frio extremo', 'Requer oxigênio para combustão', 'Pode causar incêndios acidentais', 'Pode superaquecer o próprio corpo'] },
+            agua: { name: 'Água', names: ['Hidrocinese', 'Maré Viva', 'Abraço do Oceano'], advantage: 'fogo', abilities: ['Controlar corpos d\'água', 'Respirar debaixo d\'água', 'Lâminas de água pressurizada', 'Mudar estado (líquido, sólido, gasoso)', 'Cura através da água'], weaknesses: ['Vulnerável à eletricidade', 'Poder drasticamente reduzido em desertos', 'Difícil de controlar em estado gasoso'] },
+            arcano: { name: 'Arcano', names: ['Magia Bruta', 'Tecelão de Feitiços', 'Corrupção Arcana'], advantage: 'gravidade', abilities: ['Manipular mana', 'Lançar feitiços de grimórios', 'Criar círculos de transmutação', 'Encantamentos'], weaknesses: ['Vulnerável a campos de anti-magia', 'Requer componentes verbais e somáticos', 'Exaustão de mana'] },
+            cosmico: { name: 'Cósmico', names: ['Poeira Estelar', 'Vontade de Titã', 'Olhar do Vazio'], advantage: 'vida', abilities: ['Manipular radiação estelar', 'Criar pequenos buracos de minhoca', 'Invocar meteoros'], weaknesses: ['Poder instável e perigoso', 'Atrai atenção de entidades cósmicas'] },
+            morte: { name: 'Morte', names: ['Necromancia', 'Toque Gélido', 'Ceifador de Almas'], advantage: 'natureza', abilities: ['Drenar a energia vital com o toque', 'Comunicar-se com os mortos', 'Aura de medo e decadência'], weaknesses: ['Afasta seres vivos', 'O uso constante drena a própria vitalidade', 'Ineficaz contra construtos'] },
+            tecnologia: { name: 'Tecnologia', names: ['Ciber-Hacker', 'Mestre das Máquinas', 'Vontade de Metal'], advantage: 'fogo', abilities: ['Tecnopatia', 'Arsenal cibernético', 'Nanites construtores'], weaknesses: ['Vulnerável a PEM', 'Requer energia e manutenção'] },
+            psiquico: { name: 'Psíquico', names: ['Mente Suprema', 'Telecinético', 'Invasor Mental'], advantage: 'arcano', abilities: ['Telecinese poderosa', 'Invasão mental', 'Barreiras psiônicas', 'Leitura de pensamentos', 'Controle emocional'], weaknesses: ['Sobrecarga sensorial', 'Dor de cabeça intensa', 'Vulnerável a ruído mental', 'Requer concentração'] },
+            natureza: { name: 'Natureza', names: ['Guardião Verde', 'Senhor das Feras', 'Coração da Floresta'], advantage: 'agua', abilities: ['Controle de flora', 'Comunicação com animais', 'Regeneração com luz solar', 'Crescimento acelerado de plantas', 'Simbiose com a natureza'], weaknesses: ['Vulnerável ao fogo', 'Afetado por poluição', 'Fraco em ambientes urbanos', 'Dependente de vida vegetal'] },
+            luz: { name: 'Luz', names: ['Portador da Aurora', 'Lâmina Sagrada', 'Purificador'], advantage: 'morte', abilities: ['Feixes de luz concussiva', 'Cura através da luz', 'Purificação de energia negativa', 'Ilusões de luz', 'Cegueira temporária'], weaknesses: ['Ineficaz na escuridão total', 'Vulnerável a seres neutros', 'Requer fonte de luz', 'Pode ser absorvido por trevas'] },
+            som: { name: 'Som', names: ['Eco Destruidor', 'Maestro do Caos', 'Voz do Trovão'], advantage: 'tecnologia', abilities: ['Ondas de choque sônicas', 'Cancelamento de ruído', 'Frequências ressonantes', 'Ecolocalização', 'Amplificação vocal'], weaknesses: ['Ineficaz no vácuo', 'Materiais absorventes', 'Pode causar surdez própria', 'Requer ar para propagação'] },
+        };
+        const manifestations = {
+            controle: { name: 'Controle', description: 'Manipular o domínio existente no ambiente.' }, 
+            geracao: { name: 'Geração', description: 'Criar o domínio a partir da própria energia.' },
+            transformacao: { name: 'Transformação', description: 'Converter o próprio corpo ou matéria em seu domínio.' }, 
+            convocacao: { name: 'Convocação', description: 'Invocar seres ou construtos feitos de seu domínio.' },
+            nulificacao: { name: 'Nulificação', description: 'Anular ou apagar a existência de seu domínio.' },
+            absorcao: { name: 'Absorção', description: 'Absorver o domínio para se fortalecer e carregar ataques especiais.' },
+            encantamento: { name: 'Encantamento', description: 'Imbuir objetos ou a si mesmo com as propriedades do domínio.' },
+            zona: { name: 'Criação de Zona', description: 'Alterar uma área para refletir completamente o domínio.' }
+        };
+        const synergyAbilities = { 
+            'morte_convocacao': { name: 'Legião dos Caídos', text: 'Convoca um pequeno grupo de guerreiros esqueléticos para lutar ao seu lado.' },
+            'fogo_transformacao': { name: 'Corpo de Plasma', text: 'Transforma o corpo em plasma superaquecido, aumentando drasticamente o poder mas causando dano contínuo.' },
+            'agua_convocacao': { name: 'Leviatã das Profundezas', text: 'Invoca um construto gigante de água pressurizada que pode esmagar inimigos.' },
+            'psiquico_controle': { name: 'Marionete Mental', text: 'Controla temporariamente a mente de um oponente, forçando-o a atacar a si mesmo.' },
+            'natureza_geracao': { name: 'Floresta Súbita', text: 'Cria instantaneamente uma densa floresta que oferece cobertura e regeneração.' },
+            'luz_encantamento': { name: 'Lâmina Sagrada', text: 'Imbui uma arma com luz purificadora que causa dano extra contra seres das trevas.' },
+            'som_zona': { name: 'Campo de Silêncio', text: 'Cria uma zona onde todos os sons são anulados, impedindo comunicação e feitiços verbais.' },
+            'tecnologia_absorcao': { name: 'Drenagem Energética', text: 'Absorve energia de dispositivos eletrônicos para recarregar as próprias habilidades.' },
+            'arcano_nulificacao': { name: 'Zona Anti-Magia', text: 'Cria uma área onde toda magia é suprimida, neutralizando poderes arcanos.' },
+            'cosmico_transformacao': { name: 'Forma Estelar', text: 'Transforma o corpo em energia cósmica pura, ganhando capacidade de voo e ataques devastadores.' },
+            'fogo_absorcao': { name: 'Devorador de Chamas', text: 'Absorve qualquer fonte de calor ou fogo para amplificar exponencialmente o próximo ataque.' },
+            'agua_zona': { name: 'Domínio Aquático', text: 'Transforma a área de batalha em um ambiente subaquático, dando vantagem total.' },
+            'morte_encantamento': { name: 'Toque da Perdição', text: 'Imbui as mãos com energia necrótica que drena a força vital com cada toque.' },
+            'psiquico_geracao': { name: 'Construtos Mentais', text: 'Materializa pensamentos em construtos sólidos que podem atacar ou defender.' },
+            'natureza_transformacao': { name: 'Avatar da Floresta', text: 'Funde-se com a natureza, ganhando resistência massiva e habilidades de regeneração.' },
+            'luz_controle': { name: 'Prisma Cegante', text: 'Manipula a luz ambiente para criar ilusões e cegar temporariamente os oponentes.' },
+            'som_transformacao': { name: 'Eco Vivo', text: 'Transforma o corpo em ondas sonoras, permitindo atravessar obstáculos e ataques surpresa.' },
+            'tecnologia_convocacao': { name: 'Enxame de Drones', text: 'Convoca múltiplos drones autônomos que atacam coordenadamente.' },
+            'arcano_absorcao': { name: 'Vampiro de Mana', text: 'Drena a energia mágica de feitiços inimigos para fortalecer os próprios encantamentos.' },
+            'cosmico_zona': { name: 'Distorção Espacial', text: 'Altera a gravidade e o espaço-tempo na área, desorientando inimigos.' }
+        };
+        const characterNames = { first: ['Aric', 'Lysandra', 'Kael', 'Seraphina', 'Orion'], last: ['da Sombra', 'do Vazio', 'Chama Solar', 'Mão de Ferro', 'Trovão'] };
+        const archetypes = ['Herói relutante', 'Vilão trágico', 'Mercenário cínico', 'Guardião ancestral', 'Explorador curioso'];
+        const powerOrigins = ['Acidente científico', 'Herança de linhagem sanguínea', 'Pacto com uma entidade antiga', 'Despertar sob estresse extremo', 'Artefato místico encontrado'];
+        const alignments = ['Herói', 'Anti-Herói', 'Neutro', 'Anti-Vilão', 'Vilão'];
+        const battleScenarios = [ { name: 'Arena Vulcânica', modifiers: { fogo: 1.2, gelo: 0.8, agua: 0.9 } }, { name: 'Cidade Cibernética', modifiers: { tecnologia: 1.3, natureza: 0.7 } }, { name: 'Floresta Arcana', modifiers: { arcano: 1.2, natureza: 1.2, tecnologia: 0.8 } }, { name: 'Vazio Cósmico', modifiers: { cosmico: 1.5, vida: 0.5 } } ];
+        const itemBlueprints = { 
+            types: {
+                weapon: ['Espada', 'Cajado', 'Arco', 'Lança', 'Martelo', 'Adaga'],
+                armor: ['Armadura', 'Manto', 'Escudo', 'Capacete', 'Botas', 'Luvas'],
+                accessory: ['Anel', 'Amuleto', 'Colar', 'Bracelete', 'Tiara', 'Orbe']
             },
-            arcano: {
-                names: ["Selo de Salum", "Eco do Grimório", "Coração da Convergência", "Lágrima de Íris", "Vontade do Arquimago", "Chave do Nexo Mágico"],
-                origins: ["O poder flui de uma linhagem antiga, despertado por um evento cataclísmico.", "O portador fez um pacto com uma entidade arcana, recebendo poder em troca de um preço desconhecido.", "Uma relíquia mágica se fundiu com a alma do usuário, concedendo acesso a magias proibidas.", "O portador nasceu durante uma convergência mágica rara, absorvendo energia de múltiplas dimensões."],
-                consequences: ["Cada feitiço lançado consome uma pequena parte da alma do usuário.", "O portador atrai constantemente a atenção de demônios e outras entidades malignas.", "A magia corrompe lentamente o corpo físico, causando mutações estranhas.", "O usuário perde gradualmente a capacidade de distinguir entre realidade e ilusão."],
-                abilities: [
-                    { name: "Invocação Elemental", description: "Convoca e controla elementos primordiais como fogo, água, terra e ar.", score: 7, tags: ['elemental', 'invocação', 'versatil'] },
-                    { name: "Teletransporte Dimensional", description: "Move-se instantaneamente através de portais entre dimensões.", score: 8, tags: ['dimensional', 'movimento', 'escape'] },
-                    { name: "Necromancia", description: "Controla mortos-vivos e pode drenar energia vital de seres vivos.", score: 9, tags: ['necromancia', 'controle', 'drenagem'] },
-                    { name: "Ilusões Mentais", description: "Cria ilusões tão reais que podem causar dano físico real.", score: 6, tags: ['mental', 'ilusão', 'psicológica'] },
-                    { name: "Transmutação", description: "Altera a forma e propriedades de objetos e seres vivos.", score: 7, tags: ['transmutação', 'alteração', 'versatil'] },
-                    { name: "Barreira Arcana", description: "Cria escudos mágicos que podem bloquear ataques físicos e mágicos.", score: 6, tags: ['defensiva', 'proteção', 'barreira'] }
-                ],
-                weaknesses: [
-                    { name: "Vulnerabilidade a Ferro Frio", description: "Ferro forjado sem calor anula completamente os poderes mágicos.", score: -8, tags: ['vulnerabilidade_material'] },
-                    { name: "Exaustão Mágica", description: "Uso excessivo de magia causa fadiga extrema e pode levar ao coma.", score: -6, tags: ['limitação_uso'] },
-                    { name: "Círculos de Banimento", description: "Símbolos sagrados específicos podem prender ou banir o usuário.", score: -7, tags: ['vulnerabilidade_ritual'] },
-                    { name: "Dependência Lunar", description: "Poderes enfraquecem drasticamente durante a lua nova.", score: -5, tags: ['vulnerabilidade_temporal'] }
-                ]
+            materials: ['de Obsidiana', 'de Metal Estelar', 'de Nanocarbono', 'de Cristal Arcano', 'de Madeira Viva', 'de Luz Solidificada', 'de Eco Ressonante', 'de Plasma Estável'],
+            enchantments: { 
+                fogo: 'Flamejante', agua: 'das Marés', arcano: 'Arcano', cosmico: 'Estelar', 
+                morte: 'Sombrio', tecnologia: 'Cibernético', psiquico: 'Mental', 
+                natureza: 'Selvagem', luz: 'Radiante', som: 'Ressonante' 
             },
-            tecnologico: {
-                names: ["Interface Neural Quântica", "Exoesqueleto Adaptativo", "Nanoenxame Simbiótico", "Reator de Fusão Portátil", "IA Companheira", "Armadura de Plasma"],
-                origins: ["Resultado de experimentos militares secretos com tecnologia alienígena recuperada.", "Criado por uma corporação futurista como o próximo passo na evolução humana.", "Tecnologia desenvolvida por uma IA superinteligente para seus agentes humanos.", "Equipamento de uma civilização avançada que chegou à Terra através de um portal dimensional."],
-                consequences: ["A tecnologia lentamente substitui partes do corpo humano, questionando o que significa ser humano.", "Sistemas de rastreamento governamentais constantemente monitoram o usuário.", "A dependência da tecnologia cria vulnerabilidades a ataques cibernéticos.", "Atualizações de software podem alterar a personalidade e memórias do usuário."],
-                abilities: [
-                    { name: "Hacking Neural", description: "Interfere diretamente com sistemas eletrônicos e mentes cibernéticas.", score: 8, tags: ['cibernética', 'controle', 'tecnológica'] },
-                    { name: "Força Amplificada", description: "Exoesqueleto multiplica a força física em até 50 vezes.", score: 7, tags: ['física', 'amplificação', 'força'] },
-                    { name: "Regeneração Nanotecnológica", description: "Nanobots reparam ferimentos e doenças em tempo real.", score: 8, tags: ['regeneração', 'cura', 'nanotecnologia'] },
-                    { name: "Projeção Holográfica", description: "Cria hologramas sólidos temporários para combate ou infiltração.", score: 6, tags: ['projeção', 'ilusão', 'versatil'] },
-                    { name: "Análise Preditiva", description: "IA calcula probabilidades e prevê ações inimigas com alta precisão.", score: 7, tags: ['análise', 'previsão', 'estratégica'] },
-                    { name: "Campo de Energia", description: "Gera escudos de energia e rajadas de plasma concentrado.", score: 8, tags: ['energia', 'defensiva', 'ofensiva'] }
-                ],
-                weaknesses: [
-                    { name: "Pulso Eletromagnético", description: "EMPs desabilitam temporariamente todos os sistemas tecnológicos.", score: -9, tags: ['vulnerabilidade_eletrônica'] },
-                    { name: "Sobrecarga de Sistema", description: "Uso intenso causa superaquecimento e falhas críticas.", score: -6, tags: ['limitação_térmica'] },
-                    { name: "Dependência Energética", description: "Requer recarga constante, tornando-se inútil sem fonte de energia.", score: -7, tags: ['dependência_energia'] },
-                    { name: "Vírus Cibernético", description: "Malware especializado pode corromper sistemas e causar comportamento errático.", score: -8, tags: ['vulnerabilidade_software'] }
-                ]
-            },
-            biologico: {
-                names: ["Mutação Adaptativa", "Simbiose Parasitária", "Evolução Acelerada", "Hibridização Genética", "Regeneração Celular", "Instinto Primordial"],
-                origins: ["Exposição a radiação alienígena alterou permanentemente o DNA do portador.", "Infecção por um vírus senciente que concede habilidades em troca de coexistência.", "Experimentos genéticos ilegais combinaram DNA humano com criaturas extintas.", "Mutação natural rara que ocorre uma vez a cada milhão de nascimentos."],
-                consequences: ["O corpo sofre mutações constantes, algumas benéficas, outras grotescas.", "Instintos animais gradualmente sobrepõem a racionalidade humana.", "O sistema imunológico hiperativo ataca células saudáveis.", "Necessidades alimentares se tornam extremas e específicas."],
-                abilities: [
-                    { name: "Metamorfose Corporal", description: "Altera a forma física para se adaptar a diferentes situações.", score: 8, tags: ['transformação', 'adaptação', 'física'] },
-                    { name: "Regeneração Extrema", description: "Regenera membros perdidos e se recupera de ferimentos fatais.", score: 9, tags: ['regeneração', 'sobrevivência', 'cura'] },
-                    { name: "Sentidos Aprimorados", description: "Visão, audição, olfato e tato amplificados além dos limites humanos.", score: 6, tags: ['sensorial', 'percepção', 'detecção'] },
-                    { name: "Toxinas Naturais", description: "Produz venenos e ácidos através da pele, saliva ou garras.", score: 7, tags: ['toxina', 'ofensiva', 'química'] },
-                    { name: "Mimetismo Biológico", description: "Copia habilidades e características de outras formas de vida.", score: 8, tags: ['mimetismo', 'adaptação', 'cópia'] },
-                    { name: "Controle Feromonal", description: "Influencia comportamento de outros seres através de feromônios.", score: 5, tags: ['controle', 'química', 'influência'] }
-                ],
-                weaknesses: [
-                    { name: "Instabilidade Genética", description: "Mutações aleatórias podem causar falhas orgânicas críticas.", score: -7, tags: ['instabilidade_genética'] },
-                    { name: "Vulnerabilidade a Antibióticos", description: "Medicamentos comuns podem ser letais devido à biologia alterada.", score: -6, tags: ['vulnerabilidade_médica'] },
-                    { name: "Necessidades Metabólicas", description: "Requer consumo massivo de nutrientes específicos para manter as habilidades.", score: -5, tags: ['dependência_nutricional'] },
-                    { name: "Rejeição Imunológica", description: "Sistema imunológico de outros seres reage violentamente à presença do usuário.", score: -6, tags: ['rejeição_biológica'] }
-                ]
-            },
-            psiquico: {
-                names: ["Mente Coletiva", "Eco Telepático", "Fragmento Psíquico", "Nexus Mental", "Consciência Expandida", "Ressonância Cerebral"],
-                origins: ["Trauma psicológico extremo desbloqueou áreas dormentes do cérebro.", "Contato com uma entidade psíquica alienígena deixou uma marca permanente.", "Experimentos com drogas psicoativas abriram portais mentais.", "Nasceu com uma anomalia neurológica que concede habilidades telepáticas."],
-                consequences: ["Constantemente bombardeado pelos pensamentos e emoções de outros.", "Personalidades múltiplas se desenvolvem como mecanismo de defesa.", "Dores de cabeça crônicas e sangramentos nasais frequentes.", "Dificuldade em distinguir entre pensamentos próprios e alheios."],
-                abilities: [
-                    { name: "Telepatia", description: "Lê pensamentos e se comunica mentalmente com outros seres.", score: 7, tags: ['mental', 'comunicação', 'leitura'] },
-                    { name: "Telecinese", description: "Move objetos com o poder da mente, desde pequenos itens até veículos.", score: 8, tags: ['telecinese', 'movimento', 'força'] },
-                    { name: "Controle Mental", description: "Influencia ou controla completamente as ações de outras pessoas.", score: 9, tags: ['controle', 'dominação', 'mental'] },
-                    { name: "Projeção Astral", description: "Separa a consciência do corpo físico para explorar outros planos.", score: 6, tags: ['projeção', 'espiritual', 'exploração'] },
-                    { name: "Precognição", description: "Vislumbra eventos futuros através de visões e sonhos proféticos.", score: 7, tags: ['temporal', 'previsão', 'futuro'] },
-                    { name: "Escudo Mental", description: "Protege a mente contra ataques psíquicos e influências externas.", score: 6, tags: ['defensiva', 'proteção', 'mental'] }
-                ],
-                weaknesses: [
-                    { name: "Sobrecarga Sensorial", description: "Ambientes com muitas mentes causam dor extrema e desorientação.", score: -7, tags: ['sobrecarga_mental'] },
-                    { name: "Vulnerabilidade Psíquica", description: "Outros psíquicos podem causar dano mental permanente.", score: -8, tags: ['vulnerabilidade_psíquica'] },
-                    { name: "Instabilidade Emocional", description: "Emoções intensas de outros afetam drasticamente o estado mental.", score: -6, tags: ['instabilidade_emocional'] },
-                    { name: "Dependência de Concentração", description: "Distrações ou ferimentos impedem o uso dos poderes.", score: -5, tags: ['dependência_concentração'] }
-                ]
+            effects: {
+                weapon: ['Aumenta dano crítico', 'Drena energia do inimigo', 'Causa efeitos elementais'],
+                armor: ['Reduz dano recebido', 'Regenera energia', 'Reflete ataques'],
+                accessory: ['Amplifica habilidades', 'Concede resistências', 'Melhora concentração']
             }
         };
-
-        const tierConfig = {
-            extremo: { name: 'Extremo', minScore: 45, color: '#ef4444' },
-            cosmico: { name: 'Cósmico', minScore: 35, color: '#a855f7' },
-            elevado: { name: 'Elevado', minScore: 25, color: '#3b82f6' },
-            controlavel: { name: 'Controlável', minScore: 15, color: '#06b6d4' },
-            baixo: { name: 'Baixo', minScore: 0, color: '#22c55e' }
-        };
-
-        // ELEMENTOS DOM
-        const generateBtn = document.getElementById('generate-btn');
+        
+        let powerA = null; let powerB = null;
         const battleBtn = document.getElementById('battle-btn');
-        const arenaBattleBtn = document.getElementById('arena-battle-btn');
-        const viewToggleBtn = document.getElementById('view-toggle-btn');
-        const characterToggleBtn = document.getElementById('character-toggle-btn');
-        const themeSelector = document.getElementById('theme-selector');
-        const resultsContainer = document.getElementById('results-container');
-        const generatorView = document.getElementById('generator-view');
-        const arenaView = document.getElementById('arena-view');
-        const characterView = document.getElementById('character-view');
-        const savedPowersContainer = document.getElementById('saved-powers-container');
-        const savedCharactersContainer = document.getElementById('saved-characters-container');
-        const arenaContainer = document.getElementById('arena-container');
-        const searchInput = document.getElementById('search-saved');
-        const searchCharactersInput = document.getElementById('search-characters');
-        const filterBtnContainer = document.getElementById('saved-filters');
-        const characterFilterBtnContainer = document.getElementById('character-filters');
-        const mainModal = document.getElementById('main-modal');
-        const modalContentArea = document.getElementById('modal-content-area');
-        const characterForm = document.getElementById('character-creation-form');
-        const characterPowerSelect = document.getElementById('character-power');
+        const resultEl = document.getElementById('battle-result');
+        const rarityFilter = document.getElementById('rarity-filter');
+        const domainFilter = document.getElementById('domain-filter');
+        const gallerySearch = document.getElementById('gallery-search');
+        const gallerySort = document.getElementById('gallery-sort');
 
-        // VARIÁVEIS GLOBAIS
-        let currentlyGeneratedPowers = [null, null];
-        let arenaCombatants = [];
-        let currentView = 'generator';
+        // --- FUNÇÕES DE DADOS (LocalStorage) ---
+        const getSavedPowers = () => JSON.parse(localStorage.getItem('savedPowers')) || [];
+        const savePowers = (powers) => localStorage.setItem('savedPowers', JSON.stringify(powers));
+        const getEpicBattles = () => JSON.parse(localStorage.getItem('epicBattles')) || [];
+        const saveEpicBattles = (battles) => localStorage.setItem('epicBattles', JSON.stringify(battles));
 
-        // FUNÇÕES PRINCIPAIS
-        function getRandomElement(array) { return array[Math.floor(Math.random() * array.length)]; }
+        // --- FUNÇÕES AUXILIARES ---
+        const weightedRandom = (items) => { const total = Object.values(items).reduce((s, i) => s + i.weight, 0); let r = Math.random() * total; for (const k in items) { if (r < items[k].weight) return k; r -= items[k].weight; } };
+        const getRandomKey = (obj) => { const keys = Object.keys(obj); return keys[Math.floor(Math.random() * keys.length)]; };
+        const getRandomSample = (arr, n) => [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
+        const openModal = (modalEl) => modalEl.classList.add('visible');
+        const closeModal = (modalEl) => modalEl.classList.remove('visible');
 
-        function createSinglePower() {
-            const themes = Object.keys(allData);
-            const selectedTheme = themeSelector.value === 'random' ? getRandomElement(themes) : themeSelector.value;
-            const themeData = allData[selectedTheme];
+        // --- LÓGICA DE GERAÇÃO DE PODER ---
+        function generatePower(options = {}) {
+            const rarityKey = options.rarity && options.rarity !== 'any' ? options.rarity : weightedRandom(rarities);
+            const domainKey = options.domain && options.domain !== 'any' ? options.domain : getRandomKey(domains);
+            let manifestationKey = getRandomKey(manifestations);
+            const synergyKey = `${domainKey}_${manifestationKey}`;
+            const hasSynergy = !!synergyAbilities[synergyKey];
+            const rarity = rarities[rarityKey]; const domain = domains[domainKey]; const manifestation = manifestations[manifestationKey];
+            const levelKeys = Object.keys(levels); let baseLevelIndex = 0;
+            if (rarity.score >= 16) baseLevelIndex = 6; if (rarity.score >= 50) baseLevelIndex = 11;
+            const finalLevelIndex = Math.min(baseLevelIndex + Math.floor(Math.random() * 3), levelKeys.length - 1);
+            const levelKey = levelKeys[finalLevelIndex]; const level = levels[levelKey];
+            let numAbilities, numWeaknesses;
+            switch (rarityKey) {
+                case 'comum': numAbilities = 1 + Math.floor(Math.random() * 2); numWeaknesses = 2; break;
+                case 'raro': numAbilities = 2 + Math.floor(Math.random() * 2); numWeaknesses = 1; break;
+                case 'lendario': numAbilities = 3 + Math.floor(Math.random() * 2); numWeaknesses = 1; break;
+                default: numAbilities = 2; numWeaknesses = 2;
+            }
+            const finalAbilities = getRandomSample(domain.abilities, numAbilities);
+            const finalWeaknesses = getRandomSample(domain.weaknesses, numWeaknesses);
+            if (hasSynergy) finalAbilities.unshift(synergyAbilities[synergyKey].name);
+            const powerName = getRandomSample(domain.names, 1)[0] || `${manifestation.name} de ${domain.name}`;
+            const description = `Permite ao usuário ${manifestation.description.toLowerCase()} (${domain.name}).`;
+            return { name: powerName, rarityKey, rarity, levelKey, level, domainKey, domain, manifestation, description, abilities: finalAbilities, weaknesses: finalWeaknesses, xp: 0, xpToNextLevel: 100, character: null, uid: Date.now() + Math.random(), equippedItem: null };
+        }
+        
+        function renderPower(power, slot) {
+            const slotEl = document.getElementById(`power-${slot}`); if (!slotEl) return;
+            const cardEl = slotEl.querySelector('.power-card');
+            cardEl.querySelector('.power-name').textContent = power.name;
+            const typeTagEl = cardEl.querySelector('.power-type-tag');
+            typeTagEl.textContent = power.domain.name; typeTagEl.className = `power-type-tag type-${power.domainKey}`;
+            const rarityEl = cardEl.querySelector('.power-rarity');
+            rarityEl.textContent = power.rarity.name; rarityEl.className = `power-rarity rarity-${power.rarityKey}`;
+            cardEl.querySelector('.power-level').textContent = power.level.name;
+            cardEl.querySelector('.power-description').textContent = power.description;
+            cardEl.querySelector('.abilities-list').innerHTML = power.abilities.map(ab => `<li>${ab}</li>`).join('');
+            cardEl.querySelector('.weaknesses-list').innerHTML = power.weaknesses.map(wk => `<li>${wk}</li>`).join('');
+            cardEl.style.display = 'flex';
+            slotEl.querySelector('[data-action="save-power"]').style.display = 'block';
+            slotEl.querySelector('[data-action="share-power"]').style.display = 'block';
+        }
+
+        // --- LÓGICA DE BATALHA E EVOLUÇÃO ---
+        function battle() {
+            if (!powerA || !powerB) return;
+            const scenario = getRandomSample(battleScenarios, 1)[0];
+            const baseScoreA = powerA.rarity.score * powerA.level.score;
+            const baseScoreB = powerB.rarity.score * powerB.level.score;
+            let scoreA = baseScoreA * (Math.random() * 0.2 + 0.9);
+            let scoreB = baseScoreB * (Math.random() * 0.2 + 0.9);
             
-            const power = {
-                id: Date.now() + Math.random(),
-                theme: selectedTheme,
-                name: getRandomElement(themeData.names),
-                origin: getRandomElement(themeData.origins),
-                consequence: getRandomElement(themeData.consequences),
-                abilities: [],
-                weaknesses: []
+            // Armazenar dados detalhados para o log
+            window.lastBattleDetails = {
+                powerA: powerA, powerB: powerB, scenario: scenario,
+                baseScoreA: baseScoreA, baseScoreB: baseScoreB,
+                modifiers: { A: [], B: [] }
             };
-
-            // Selecionar habilidades (3-5)
-            const numAbilities = 3 + Math.floor(Math.random() * 3);
-            const shuffledAbilities = [...themeData.abilities].sort(() => 0.5 - Math.random());
-            power.abilities = shuffledAbilities.slice(0, numAbilities);
-
-            // Selecionar fraquezas (2-3)
-            const numWeaknesses = 2 + Math.floor(Math.random() * 2);
-            const shuffledWeaknesses = [...themeData.weaknesses].sort(() => 0.5 - Math.random());
-            power.weaknesses = shuffledWeaknesses.slice(0, numWeaknesses);
-
-            // Calcular pontuação total
-            const abilityScore = power.abilities.reduce((sum, ability) => sum + ability.score, 0);
-            const weaknessScore = power.weaknesses.reduce((sum, weakness) => sum + Math.abs(weakness.score), 0);
-            power.totalScore = Math.max(0, abilityScore - weaknessScore);
-
-            // Determinar tier
-            power.tier = Object.entries(tierConfig).find(([key, config]) => power.totalScore >= config.minScore)?.[0] || 'baixo';
-
-            return power;
+            
+            if (powerA.equippedItem) { 
+                scoreA *= powerA.equippedItem.modifier; 
+                window.lastBattleDetails.modifiers.A.push(`Item: +${((powerA.equippedItem.modifier - 1) * 100).toFixed(0)}%`);
+            }
+            if (powerB.equippedItem) { 
+                scoreB *= powerB.equippedItem.modifier; 
+                window.lastBattleDetails.modifiers.B.push(`Item: +${((powerB.equippedItem.modifier - 1) * 100).toFixed(0)}%`);
+            }
+            if (scenario.modifiers[powerA.domainKey]) { 
+                scoreA *= scenario.modifiers[powerA.domainKey]; 
+                window.lastBattleDetails.modifiers.A.push(`Cenário: ${((scenario.modifiers[powerA.domainKey] - 1) * 100).toFixed(0)}%`);
+            }
+            if (scenario.modifiers[powerB.domainKey]) { 
+                scoreB *= scenario.modifiers[powerB.domainKey]; 
+                window.lastBattleDetails.modifiers.B.push(`Cenário: ${((scenario.modifiers[powerB.domainKey] - 1) * 100).toFixed(0)}%`);
+            }
+            
+            const advantageMap = Object.entries(domains).reduce((acc, [key, value]) => { acc[key] = value.advantage; return acc; }, {});
+            let log = [`Cenário: ${scenario.name}!\n`, `A batalha começa! ${powerA.name} vs ${powerB.name}.`];
+            
+            if (advantageMap[powerA.domainKey] === powerB.domainKey) { 
+                scoreA *= 1.25; 
+                log.push(`${powerA.domain.name} tem vantagem sobre ${powerB.domain.name}!`); 
+                window.lastBattleDetails.modifiers.A.push('Vantagem de Domínio: +25%');
+            }
+            else if (advantageMap[powerB.domainKey] === powerA.domainKey) { 
+                scoreB *= 1.25; 
+                log.push(`${powerB.domain.name} tem vantagem sobre ${powerA.domain.name}!`); 
+                window.lastBattleDetails.modifiers.B.push('Vantagem de Domínio: +25%');
+            }
+            
+            window.lastBattleDetails.finalScoreA = scoreA;
+            window.lastBattleDetails.finalScoreB = scoreB;
+            
+            log.push(`${powerA.character ? powerA.character.name : powerA.name} ataca com '${getRandomSample(powerA.abilities, 1)[0]}'`);
+            log.push(`${powerB.character ? powerB.character.name : powerB.name} responde com '${getRandomSample(powerB.abilities, 1)[0]}'`);
+            let winner = null;
+            if (Math.abs(scoreA - scoreB) < (scoreA + scoreB) * 0.1) { log.push("O confronto é acirrado... É um EMPATE!"); resultEl.style.color = 'var(--text-color)'; }
+            else if (scoreA > scoreB) { log.push(`O poder de ${powerA.name} se sobressai! Vitória para o Combatente A!`); resultEl.style.color = 'var(--primary-color)'; winner = powerA; }
+            else { log.push(`A força de ${powerB.name} é avassaladora! Vitória para o Combatente B!`); resultEl.style.color = 'var(--secondary-color)'; winner = powerB; }
+            resultEl.textContent = log.join('\n');
+            
+            // Mostrar controles extras após a batalha
+            document.querySelector('.battle-controls-extra').style.display = 'flex';
+            
+            if (winner) awardXp(winner.uid, 50);
+            if(powerA.rarity.score >= 8 && powerB.rarity.score >= 8) { const battles = getEpicBattles(); battles.unshift({log, date: new Date().toLocaleString('pt-BR')}); saveEpicBattles(battles.slice(0, 20)); }
+        }
+        
+        function awardXp(powerUid, amount) { const savedPowers = getSavedPowers(); const p = savedPowers.find(p => p.uid === powerUid); if (!p) return; p.xp += amount; if (p.xp >= p.xpToNextLevel) { alert(`O poder "${p.name}" está pronto para evoluir!`); } savePowers(savedPowers); }
+        
+        // --- LÓGICA DA GALERIA E PERSONAGENS ---
+        function renderGallery() {
+            let savedPowers = getSavedPowers();
+            const searchTerm = gallerySearch.value.toLowerCase();
+            const sortBy = gallerySort.value;
+            if (searchTerm) { savedPowers = savedPowers.filter(p => (p.character?.name || p.name).toLowerCase().includes(searchTerm)); }
+            if (sortBy === 'level') { savedPowers.sort((a,b) => (b.rarity.score * b.level.score) - (a.rarity.score * a.level.score)); }
+            const grid = document.getElementById('gallery-grid'); grid.innerHTML = '';
+            if (savedPowers.length === 0) { grid.innerHTML = '<p>Nenhum poder salvo.</p>'; return; }
+            savedPowers.forEach((power) => { const card = document.createElement('div'); card.className = 'gallery-card'; const xpPercent = Math.min((power.xp / power.xpToNextLevel) * 100, 100); card.innerHTML = `<div class="gallery-card-header"><span>${power.character ? power.character.name : power.name}</span><span class="rarity-${power.rarityKey}" style="padding: 2px 5px; border-radius: 3px;">${power.rarity.name} / ${power.level.name}</span></div><p>${power.character ? `${power.character.archetype} | Alinhamento: ${power.character.alignment}` : 'Sem portador'}</p><div class="xp-bar"><div class="xp-bar-fill" style="width: ${xpPercent}%"></div></div><small>${power.xp}/${power.xpToNextLevel} XP</small><div class="gallery-card-actions"><button class="btn" data-action="load-power" data-uid="${power.uid}" data-slot="a">Carregar A</button><button class="btn" data-action="load-power" data-uid="${power.uid}" data-slot="b">Carregar B</button><button class="btn" data-action="open-evolution-tree" data-uid="${power.uid}">Evoluir</button><button class="btn" data-action="open-character-profile" data-uid="${power.uid}">Perfil</button><button class="btn" data-action="delete-power" data-uid="${power.uid}">Excluir</button></div>`; grid.appendChild(card); });
         }
 
-        function displayPower(power, cardNumber) {
-            const card = document.getElementById(`power-card-${cardNumber}`);
-            const tierInfo = tierConfig[power.tier];
+        function generateCharacter(powerUid) { const savedPowers = getSavedPowers(); const p = savedPowers.find(p => p.uid === powerUid); if (!p) return; p.character = { name: `${getRandomSample(characterNames.first, 1)[0]} ${getRandomSample(characterNames.last, 1)[0]}`, archetype: getRandomSample(archetypes, 1)[0], origin: getRandomSample(powerOrigins, 1)[0], alignment: getRandomSample(alignments, 1)[0] }; savePowers(savedPowers); renderCharacterProfile(p); }
+        
+        function renderCharacterProfile(power) {
+            const sheet = document.getElementById('character-sheet');
+            if (!power.character) {
+                sheet.innerHTML = `<h2>Este poder ainda não tem um portador.</h2><button class="btn" data-action="generate-character-profile" data-uid="${power.uid}">Gerar Perfil Aleatório</button>`;
+            } else {
+                sheet.innerHTML = `
+                    <h2>${power.character.name}</h2><p><strong>Arquétipo:</strong> ${power.character.archetype} | <strong>Alinhamento:</strong> ${power.character.alignment}</p>
+                    <p><strong>Origem:</strong> ${power.character.origin}</p><p><strong>Equipamento:</strong> ${power.equippedItem ? power.equippedItem.name : 'Nenhum'}</p><hr>
+                    <h3>Poder: ${power.name} (${power.rarity.name} / ${power.level.name})</h3><p>${power.description}</p><div id="mission-log"></div>
+                    <div class="gallery-card-actions"><button class="btn" data-action="generate-mission" data-uid="${power.uid}">Gerar Missão</button><button class="btn" data-action="open-item-generator" data-uid="${power.uid}">Gerar Item</button></div>`;
+            }
+        }
+        
+        function renderEvolutionTree(power) {
+            const tree = document.getElementById('skill-tree');
+            tree.innerHTML = `<h2>Evolução de ${power.name}</h2><p>XP: ${power.xp}/${power.xpToNextLevel}</p>`;
+            if (power.xp >= power.xpToNextLevel) {
+                const levelKeys = Object.keys(levels); const i = levelKeys.indexOf(power.levelKey);
+                const nextLevelKey = levelKeys[i + 1];
+                tree.innerHTML += `<h3>Escolha uma melhoria:</h3><div class="skill-choice" data-action="unlock-skill" data-uid="${power.uid}" data-type="level-up" ${!nextLevelKey ? 'class="skill-choice disabled"' : ''}><strong>Aumentar Nível para ${nextLevelKey || 'MAX'}</strong><p>Aumenta a escala e o poder base.</p></div><div class="skill-choice" data-action="unlock-skill" data-uid="${power.uid}" data-type="new-ability"><strong>Nova Habilidade</strong><p>Adiciona uma nova habilidade aleatória do domínio ${power.domain.name}.</p></div>`;
+            } else { tree.innerHTML += `<p>XP insuficiente para evoluir.</p>`; }
+        }
+        
+        function unlockSkill(powerUid, type) { const savedPowers = getSavedPowers(); const p = savedPowers.find(p => p.uid == powerUid); if (!p || p.xp < p.xpToNextLevel) return; p.xp -= p.xpToNextLevel; p.xpToNextLevel = Math.round(p.xpToNextLevel * 1.5); if (type === 'level-up') { const levelKeys = Object.keys(levels); const i = levelKeys.indexOf(p.levelKey); const nextKey = levelKeys[i + 1]; if (nextKey) { p.levelKey = nextKey; p.level = levels[nextKey]; } } if (type === 'new-ability') { const newAbility = getRandomSample(p.domain.abilities.filter(a => !p.abilities.includes(a)), 1)[0]; if (newAbility) p.abilities.push(newAbility); } savePowers(savedPowers); renderEvolutionTree(p); }
+
+        function renderEncyclopedia(tab = 'domains') { const content = document.getElementById('encyclopedia-content'); let html = '<ul>'; if (tab === 'domains') { Object.values(domains).forEach(d => { html += `<li><strong>${d.name}:</strong> Vantagem sobre ${domains[d.advantage]?.name || 'N/A'}.</li>`; }); } else if (tab === 'manifestations') { Object.values(manifestations).forEach(m => { html += `<li><strong>${m.name}:</strong> ${m.description}</li>`; }); } else if (tab === 'battles') { const battles = getEpicBattles(); if (battles.length === 0) { html += '<li>Nenhuma batalha épica registrada.</li>'; } else { battles.forEach(b => { html += `<li style="margin-bottom: 1rem;"><strong>${b.date}:</strong><br>${b.log.join('<br>')}</li>`; }); } } html += '</ul>'; content.innerHTML = html; }
+
+        function generateAndRender(slot, options = {}) { const newPower = generatePower(options); if (slot === 'a') powerA = newPower; else powerB = newPower; renderPower(newPower, slot); resultEl.textContent = ''; battleBtn.disabled = !(powerA && powerB); }
+        
+        function generateItem(character) {
+            const itemTypeCategory = getRandomKey(itemBlueprints.types); // 'weapon', 'armor', 'accessory'
+            const type = getRandomSample(itemBlueprints.types[itemTypeCategory], 1)[0];
+            const material = getRandomSample(itemBlueprints.materials, 1)[0];
+            const enchantmentKey = Object.keys(itemBlueprints.enchantments).find(key => key === character.domainKey);
+            const enchantment = enchantmentKey ? itemBlueprints.enchantments[enchantmentKey] : 
+'';
+            const effect = getRandomSample(itemBlueprints.effects[itemTypeCategory], 1)[0];
+            return { name: `${type} ${enchantment} ${material}`, modifier: 1.1, effect: effect };
+        }
+        function renderItemModal(character) { const item = generateItem(character); const display = document.getElementById("item-display"); display.innerHTML = `<h2>Item Gerado</h2><div class="item-card"><h3>${item.name}</h3><p>Bônus de Poder: +10%</p><p>Efeito: ${item.effect}</p></div><button class="btn" data-action="equip-item" data-uid="${character.uid}">Equipar</button>`; document.getElementById("item-modal").classList.add("visible"); }
+        function generateMission(character) { const missionLog = document.getElementById('mission-log'); const missionText = `Missão para ${character.archetype}: Use seu poder de ${character.domain.name} para resolver uma crise!`; missionLog.innerHTML = `<hr><h3>Missão Atual</h3><p>${missionText}</p><button class="btn" data-action="complete-mission" data-uid="${character.uid}">Completar Missão (+200 XP)</button>`; }
+        function exportGallery() { const data = JSON.stringify(getSavedPowers(), null, 2); const blob = new Blob([data], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'universo-de-poderes.json'; a.click(); URL.revokeObjectURL(url); }
+        function importGallery(file) { const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if(Array.isArray(imported)) { const current = getSavedPowers(); const combined = [...current, ...imported.filter(p => !current.some(cp => cp.uid === p.uid))]; savePowers(combined); showToast('Galeria importada com sucesso!', 'success'); } else { showToast('Arquivo inválido.', 'error'); } } catch(err) { showToast('Erro ao ler o arquivo.', 'error'); } }; reader.readAsText(file); }
+
+        // --- NOVAS FUNCIONALIDADES DE UI/UX ---
+        function showDetailedLog() {
+            if (!window.lastBattleDetails) {
+                alert('Nenhuma batalha foi realizada ainda!');
+                return;
+            }
+            const details = window.lastBattleDetails;
+            let logText = `=== LOG DETALHADO DA BATALHA ===\n\n`;
+            logText += `Cenário: ${details.scenario.name}\n\n`;
+            logText += `COMBATENTE A: ${details.powerA.name}\n`;
+            logText += `- Raridade: ${details.powerA.rarity.name} (Score: ${details.powerA.rarity.score})\n`;
+            logText += `- Nível: ${details.powerA.level.name} (Score: ${details.powerA.level.score})\n`;
+            logText += `- Score Base: ${details.baseScoreA}\n`;
+            logText += `- Modificadores: ${details.modifiers.A.length > 0 ? details.modifiers.A.join(', ') : 'Nenhum'}\n`;
+            logText += `- Score Final: ${details.finalScoreA.toFixed(2)}\n\n`;
+            logText += `COMBATENTE B: ${details.powerB.name}\n`;
+            logText += `- Raridade: ${details.powerB.rarity.name} (Score: ${details.powerB.rarity.score})\n`;
+            logText += `- Nível: ${details.powerB.level.name} (Score: ${details.powerB.level.score})\n`;
+            logText += `- Score Base: ${details.baseScoreB}\n`;
+            logText += `- Modificadores: ${details.modifiers.B.length > 0 ? details.modifiers.B.join(', ') : 'Nenhum'}\n`;
+            logText += `- Score Final: ${details.finalScoreB.toFixed(2)}\n\n`;
+            logText += `RESULTADO: ${details.finalScoreA > details.finalScoreB ? 'Vitória do Combatente A' : details.finalScoreB > details.finalScoreA ? 'Vitória do Combatente B' : 'Empate'}`;
             
-            card.innerHTML = `
-                <div class="power-header">
-                    <h2 class="power-name">${power.name}</h2>
-                    <span class="tier-badge tier-${power.tier}">${tierInfo.name}</span>
-                    <div class="power-score">Pontuação Total: ${power.totalScore}</div>
-                </div>
-                
-                <div class="power-narrative">
-                    <p><strong>Origem:</strong> ${power.origin}</p>
-                    <p><strong>Consequência:</strong> ${power.consequence}</p>
-                </div>
-                
-                <h3><i class="fas fa-magic"></i> Habilidades</h3>
-                <ul>
-                    ${power.abilities.map(ability => `
-                        <li>
-                            <strong>${ability.name} (${ability.score})</strong>
-                            ${ability.description}
-                        </li>
-                    `).join('')}
-                </ul>
-                
-                <h3><i class="fas fa-exclamation-triangle"></i> Fraquezas</h3>
-                <ul>
-                    ${power.weaknesses.map(weakness => `
-                        <li>
-                            <strong>${weakness.name} (${weakness.score})</strong>
-                            ${weakness.description}
-                        </li>
-                    `).join('')}
-                </ul>
-                
-                <div class="card-footer">
-                    <button class="action-icon save-btn" data-index="${cardNumber - 1}">
-                        <i class="fas fa-save"></i>
-                    </button>
-                    <button class="action-icon share-btn" data-index="${cardNumber - 1}">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                </div>
-            `;
-            
-            card.style.borderLeftColor = tierInfo.color;
+            alert(logText);
         }
 
-        function savePower(index) {
-            const power = currentlyGeneratedPowers[index];
-            if (!power) return;
-            
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            
-            // Verificar se já existe
-            if (savedPowers.some(p => p.id === power.id)) {
-                alert('Este poder já foi salvo!');
+        function sharePower(slot) {
+            const power = slot === 'a' ? powerA : powerB;
+            if (!power) {
+                alert('Nenhum poder gerado neste slot!');
                 return;
             }
             
-            savedPowers.push(power);
-            localStorage.setItem('savedCosmicPowers', JSON.stringify(savedPowers));
-            renderSavedPowers();
-            updateCharacterPowerSelect();
-        }
-
-        function deletePower(powerId) {
-            if (!confirm('Tem certeza que deseja excluir este poder?')) return;
+            let shareText = `🔥 PODER GERADO - UNIVERSO DE PODERES 🔥\n\n`;
+            shareText += `📛 Nome: ${power.name}\n`;
+            shareText += `⭐ Raridade: ${power.rarity.name}\n`;
+            shareText += `📊 Nível: ${power.level.name}\n`;
+            shareText += `🌟 Domínio: ${power.domain.name}\n`;
+            shareText += `🔮 Manifestação: ${power.manifestation.name}\n\n`;
+            shareText += `💪 Habilidades:\n${power.abilities.map(ab => `• ${ab}`).join('\n')}\n\n`;
+            shareText += `⚠️ Fraquezas:\n${power.weaknesses.map(wk => `• ${wk}`).join('\n')}\n\n`;
+            shareText += `📝 Descrição: ${power.description}`;
             
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            const filteredPowers = savedPowers.filter(p => p.id != powerId);
-            localStorage.setItem('savedCosmicPowers', JSON.stringify(filteredPowers));
-            renderSavedPowers();
-            renderArena();
-            updateCharacterPowerSelect();
-        }
-
-        function createCharacter(characterData) {
-            const character = {
-                id: Date.now() + Math.random(),
-                ...characterData,
-                createdAt: new Date().toISOString()
-            };
-
-            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
-            savedCharacters.push(character);
-            localStorage.setItem('savedCosmicCharacters', JSON.stringify(savedCharacters));
-            
-            return character;
-        }
-
-        function deleteCharacter(characterId) {
-            if (!confirm('Tem certeza que deseja excluir este personagem?')) return;
-            
-            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
-            const filteredCharacters = savedCharacters.filter(c => c.id != characterId);
-            localStorage.setItem('savedCosmicCharacters', JSON.stringify(filteredCharacters));
-            renderSavedCharacters();
-        }
-
-        function renderSavedPowers(searchTerm = '', filterTier = 'all') {
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            
-            if (savedPowers.length === 0) {
-                savedPowersContainer.innerHTML = `
-                    <div class="saved-powers-empty">
-                        <i class="fas fa-magic" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Nenhum poder salvo ainda.</p>
-                        <p>Gere poderes e clique no ícone de salvar para começar sua coleção!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let filteredPowers = savedPowers;
-            
-            // Filtrar por busca
-            if (searchTerm) {
-                filteredPowers = filteredPowers.filter(power => 
-                    power.name.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            }
-            
-            // Filtrar por tier
-            if (filterTier !== 'all') {
-                filteredPowers = filteredPowers.filter(power => power.tier === filterTier);
-            }
-            
-            if (filteredPowers.length === 0) {
-                savedPowersContainer.innerHTML = `
-                    <div class="saved-powers-empty">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Nenhum poder encontrado com os filtros aplicados.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            savedPowersContainer.innerHTML = filteredPowers.map(power => {
-                const tierInfo = tierConfig[power.tier];
-                return `
-                    <div class="saved-power-card" data-id="${power.id}" style="border-left-color: ${tierInfo.color}">
-                        <div class="info">
-                            <div class="name">${power.name}</div>
-                            <div class="tier-info">
-                                <span class="tier-badge tier-${power.tier}">${tierInfo.name}</span>
-                                <span style="margin-left: 0.5rem;">Pontuação: ${power.totalScore}</span>
-                            </div>
-                        </div>
-                        <button class="view-details-btn">
-                            <i class="fas fa-eye"></i> Ver Detalhes
-                        </button>
-                        <button class="delete-btn" data-id="${power.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderSavedCharacters(searchTerm = '', filterClass = 'all') {
-            const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
-            
-            if (savedCharacters.length === 0) {
-                savedCharactersContainer.innerHTML = `
-                    <div class="saved-characters-empty">
-                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Nenhum personagem criado ainda.</p>
-                        <p>Use o Criador de Personagens para dar vida ao seu universo!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let filteredCharacters = savedCharacters;
-            
-            // Filtrar por busca
-            if (searchTerm) {
-                filteredCharacters = filteredCharacters.filter(character => 
-                    character.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    character.class.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            }
-            
-            // Filtrar por classe
-            if (filterClass !== 'all') {
-                filteredCharacters = filteredCharacters.filter(character => character.class === filterClass);
-            }
-            
-            if (filteredCharacters.length === 0) {
-                savedCharactersContainer.innerHTML = `
-                    <div class="saved-characters-empty">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Nenhum personagem encontrado com os filtros aplicados.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            savedCharactersContainer.innerHTML = filteredCharacters.map(character => {
-                return `
-                    <div class="saved-character-card" data-id="${character.id}">
-                        <div class="info">
-                            <div class="name">${character.name}</div>
-                            <div class="tier-info">
-                                <span class="character-class-badge">${character.class}</span>
-                                <span style="margin-left: 0.5rem;">${character.origin || 'Origem desconhecida'}</span>
-                            </div>
-                        </div>
-                        <button class="view-details-btn">
-                            <i class="fas fa-eye"></i> Ver Detalhes
-                        </button>
-                        <button class="delete-btn" data-id="${character.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderArena() {
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            
-            if (savedPowers.length === 0) {
-                arenaContainer.innerHTML = `
-                    <div class="saved-powers-empty">
-                        <i class="fas fa-shield-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Você precisa de pelo menos 2 poderes salvos para usar a Arena.</p>
-                        <p>Volte ao gerador e salve alguns poderes primeiro!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            if (savedPowers.length < 2) {
-                arenaContainer.innerHTML = `
-                    <div class="saved-powers-empty">
-                        <i class="fas fa-shield-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Você precisa de pelo menos 2 poderes salvos para batalhar na Arena.</p>
-                        <p>Salve mais um poder para desbloquear as batalhas!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            arenaContainer.innerHTML = savedPowers.map(power => {
-                const tierInfo = tierConfig[power.tier];
-                return `
-                    <div class="saved-power-card" data-id="${power.id}" style="border-left-color: ${tierInfo.color}">
-                        <div class="info">
-                            <div class="name">${power.name}</div>
-                            <div class="tier-info">
-                                <span class="tier-badge tier-${power.tier}">${tierInfo.name}</span>
-                                <span style="margin-left: 0.5rem;">Pontuação: ${power.totalScore}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateCharacterPowerSelect() {
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            
-            characterPowerSelect.innerHTML = '<option value="">Selecionar poder salvo (opcional)</option>';
-            
-            savedPowers.forEach(power => {
-                const option = document.createElement('option');
-                option.value = power.id;
-                option.textContent = `${power.name} (${tierConfig[power.tier].name})`;
-                characterPowerSelect.appendChild(option);
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Poder copiado para a área de transferência! 📋');
+            }).catch(() => {
+                // Fallback para navegadores que não suportam clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Poder copiado para a área de transferência! 📋');
             });
         }
 
-        function showDetailModal(item, type = 'power') {
-            if (type === 'power') {
-                const tierInfo = tierConfig[item.tier];
-                
-                modalContentArea.innerHTML = `
-                    <span class="close-btn">&times;</span>
-                    <div class="power-header">
-                        <h2 class="power-name">${item.name}</h2>
-                        <span class="tier-badge tier-${item.tier}">${tierInfo.name}</span>
-                        <div class="power-score">Pontuação Total: ${item.totalScore}</div>
-                    </div>
-                    
-                    <div class="power-narrative">
-                        <p><strong>Tema:</strong> ${item.theme.charAt(0).toUpperCase() + item.theme.slice(1)}</p>
-                        <p><strong>Origem:</strong> ${item.origin}</p>
-                        <p><strong>Consequência:</strong> ${item.consequence}</p>
-                    </div>
-                    
-                    <h3><i class="fas fa-magic"></i> Habilidades</h3>
-                    <ul>
-                        ${item.abilities.map(ability => `
-                            <li>
-                                <strong>${ability.name} (${ability.score})</strong>
-                                ${ability.description}
-                            </li>
-                        `).join('')}
-                    </ul>
-                    
-                    <h3><i class="fas fa-exclamation-triangle"></i> Fraquezas</h3>
-                    <ul>
-                        ${item.weaknesses.map(weakness => `
-                            <li>
-                                <strong>${weakness.name} (${weakness.score})</strong>
-                                ${weakness.description}
-                            </li>
-                        `).join('')}
-                    </ul>
-                    
-                    <div class="card-footer">
-                        <button class="action-icon share-btn" data-id="${item.id}">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                    </div>
-                `;
-            } else if (type === 'character') {
-                const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-                const characterPower = item.powerId ? savedPowers.find(p => p.id == item.powerId) : null;
-                
-                modalContentArea.innerHTML = `
-                    <span class="close-btn">&times;</span>
-                    <div class="power-header">
-                        <h2 class="power-name">${item.name}</h2>
-                        <span class="character-class-badge">${item.class}</span>
-                    </div>
-                    
-                    <div class="power-narrative">
-                        <p><strong>Origem:</strong> ${item.origin || 'Não especificada'}</p>
-                        <p><strong>Idade:</strong> ${item.age || 'Não especificada'}</p>
-                        ${item.weakness ? `<p><strong>Fraqueza Principal:</strong> ${item.weakness}</p>` : ''}
-                    </div>
-                    
-                    ${item.appearance ? `
-                        <h3><i class="fas fa-eye"></i> Aparência</h3>
-                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            ${item.appearance}
-                        </div>
-                    ` : ''}
-                    
-                    ${item.personality ? `
-                        <h3><i class="fas fa-heart"></i> Personalidade</h3>
-                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            ${item.personality}
-                        </div>
-                    ` : ''}
-                    
-                    ${item.backstory ? `
-                        <h3><i class="fas fa-book"></i> História de Fundo</h3>
-                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            ${item.backstory}
-                        </div>
-                    ` : ''}
-                    
-                    ${characterPower ? `
-                        <h3><i class="fas fa-magic"></i> Poder Principal</h3>
-                        <div style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <strong>${characterPower.name}</strong> (${tierConfig[characterPower.tier].name})<br>
-                            ${characterPower.origin}
-                        </div>
-                    ` : ''}
-                    
-                    <div style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
-                        Criado em: ${new Date(item.createdAt).toLocaleDateString('pt-BR')}
-                    </div>
-                `;
+        function shareBattleResult() {
+            if (!window.lastBattleDetails) {
+                alert('Nenhuma batalha foi realizada ainda!');
+                return;
             }
             
-            mainModal.classList.add('visible');
-        }
-
-        function sharePower(power) {
-            if (!power) return;
+            const details = window.lastBattleDetails;
+            let shareText = `⚔️ RESULTADO DA BATALHA - UNIVERSO DE PODERES ⚔️\n\n`;
+            shareText += `🏟️ Cenário: ${details.scenario.name}\n\n`;
+            shareText += `🥊 ${details.powerA.name} (${details.powerA.rarity.name} ${details.powerA.level.name})\n`;
+            shareText += `     VS\n`;
+            shareText += `🥊 ${details.powerB.name} (${details.powerB.rarity.name} ${details.powerB.level.name})\n\n`;
             
-            const shareText = `🌟 ${power.name} 🌟\n\n` +
-                `Tier: ${tierConfig[power.tier].name}\n` +
-                `Pontuação: ${power.totalScore}\n\n` +
-                `${power.origin}\n\n` +
-                `Gerado no Nexus Cósmico - O universo em suas mãos!`;
+            const winner = details.finalScoreA > details.finalScoreB ? 'A' : 
+                          details.finalScoreB > details.finalScoreA ? 'B' : 'Empate';
             
-            if (navigator.share) {
-                navigator.share({
-                    title: `Poder: ${power.name}`,
-                    text: shareText
-                });
+            if (winner === 'Empate') {
+                shareText += `🤝 RESULTADO: EMPATE ÉPICO!\n`;
             } else {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Poder copiado para a área de transferência!');
-                });
-            }
-        }
-
-        function startBattle(power1, power2) {
-            const battleResult = simulateBattle(power1, power2);
-            showBattleModal(power1, power2, battleResult);
-        }
-
-        function simulateBattle(power1, power2) {
-            const rounds = [];
-            let score1 = power1.totalScore;
-            let score2 = power2.totalScore;
-            
-            // Simular 3-5 rounds de batalha
-            const numRounds = 3 + Math.floor(Math.random() * 3);
-            
-            for (let i = 0; i < numRounds; i++) {
-                const ability1 = getRandomElement(power1.abilities);
-                const ability2 = getRandomElement(power2.abilities);
-                
-                const effectiveness1 = ability1.score + Math.floor(Math.random() * 5) - 2;
-                const effectiveness2 = ability2.score + Math.floor(Math.random() * 5) - 2;
-                
-                let roundWinner;
-                let description;
-                
-                if (effectiveness1 > effectiveness2) {
-                    roundWinner = power1.name;
-                    score2 -= Math.floor(effectiveness1 / 2);
-                    description = `${power1.name} usa ${ability1.name} contra ${ability2.name} de ${power2.name}!`;
-                } else if (effectiveness2 > effectiveness1) {
-                    roundWinner = power2.name;
-                    score1 -= Math.floor(effectiveness2 / 2);
-                    description = `${power2.name} usa ${ability2.name} contra ${ability1.name} de ${power1.name}!`;
-                } else {
-                    roundWinner = 'Empate';
-                    description = `${ability1.name} e ${ability2.name} se chocam em um empate épico!`;
-                }
-                
-                rounds.push({
-                    round: i + 1,
-                    description,
-                    winner: roundWinner,
-                    score1: Math.max(0, score1),
-                    score2: Math.max(0, score2)
-                });
-                
-                if (score1 <= 0 || score2 <= 0) break;
+                const winnerPower = winner === 'A' ? details.powerA : details.powerB;
+                shareText += `🏆 VENCEDOR: ${winnerPower.name}!\n`;
             }
             
-            const finalWinner = score1 > score2 ? power1.name : score2 > score1 ? power2.name : 'Empate';
-            
-            return {
-                rounds,
-                winner: finalWinner,
-                finalScore1: Math.max(0, score1),
-                finalScore2: Math.max(0, score2)
-            };
-        }
-
-        function showBattleModal(power1, power2, battleResult) {
-            modalContentArea.innerHTML = `
-                <span class="close-btn">&times;</span>
-                <h2>⚔️ Resultado da Batalha ⚔️</h2>
-                <div style="display: flex; justify-content: space-between; margin: 2rem 0;">
-                    <div style="text-align: center;">
-                        <h3>${power1.name}</h3>
-                        <span class="tier-badge tier-${power1.tier}">${tierConfig[power1.tier].name}</span>
-                        <div>Pontuação Final: ${battleResult.finalScore1}</div>
-                    </div>
-                    <div style="text-align: center; font-size: 2rem;">VS</div>
-                    <div style="text-align: center;">
-                        <h3>${power2.name}</h3>
-                        <span class="tier-badge tier-${power2.tier}">${tierConfig[power2.tier].name}</span>
-                        <div>Pontuação Final: ${battleResult.finalScore2}</div>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin: 2rem 0;">
-                    <h2 style="color: ${battleResult.winner === 'Empate' ? '#f9d423' : 'var(--success-color)'};">
-                        ${battleResult.winner === 'Empate' ? '🤝 EMPATE ÉPICO!' : `🏆 ${battleResult.winner.toUpperCase()} VENCE!`}
-                    </h2>
-                </div>
-                
-                <div id="battle-log-container">
-                    <h3>📜 Log da Batalha</h3>
-                    <ul id="battle-log-list">
-                        ${battleResult.rounds.map(round => `
-                            <li>
-                                <strong>Round ${round.round}:</strong> ${round.description}
-                                <br><small>Pontuações: ${power1.name} (${round.score1}) vs ${power2.name} (${round.score2})</small>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-            
-            mainModal.classList.add('visible');
-        }
-
-        function populateThemeSelector() {
-            const themes = [
-                { value: 'random', label: 'Aleatório' },
-                { value: 'cosmico', label: 'Cósmico' },
-                { value: 'arcano', label: 'Arcano' },
-                { value: 'tecnologico', label: 'Tecnológico' },
-                { value: 'biologico', label: 'Biológico' },
-                { value: 'psiquico', label: 'Psíquico' }
-            ];
-            
-            themeSelector.innerHTML = themes.map(theme => 
-                `<option value="${theme.value}">${theme.label}</option>`
-            ).join('');
-        }
-        
-        function populateFilterButtons() {
-            Object.values(tierConfig).reverse().forEach(tier => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.dataset.filter = tier.name.toLowerCase();
-                btn.textContent = tier.name;
-                filterBtnContainer.appendChild(btn);
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Resultado da batalha copiado para a área de transferência! 📋');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Resultado da batalha copiado para a área de transferência! 📋');
             });
         }
 
-        function populateCharacterFilterButtons() {
-            const classes = ['Guardião Cósmico', 'Mago Arcano', 'Tecno-Guerreiro', 'Mutante Evolutivo', 'Psíquico Transcendente', 'Híbrido Dimensional'];
-            
-            classes.forEach(className => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.dataset.filter = className;
-                btn.textContent = className;
-                characterFilterBtnContainer.appendChild(btn);
-            });
+        document.body.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-action]'); if (!target) return;
+            const action = target.dataset.action; const slot = target.dataset.slot; const uid = parseFloat(target.dataset.uid);
+            let savedPowers, power;
+            switch(action) {
+                case 'save-power': const powerToSave = slot === 'a' ? powerA : powerB; if (!powerToSave) return; savedPowers = getSavedPowers(); if (savedPowers.find(p => p.uid === powerToSave.uid)) { showToast('Este poder já foi salvo!', 'error'); return; } savedPowers.push(powerToSave); savePowers(savedPowers); showToast(`Poder "${powerToSave.name}" salvo!`, 'success'); break;
+                case 'open-gallery': renderGallery(); document.getElementById('gallery-modal').classList.add('visible'); break;
+                case 'open-encyclopedia': renderEncyclopedia(); document.getElementById('encyclopedia-modal').classList.add('visible'); break;
+                case 'close-modal': target.closest('.modal-overlay').classList.remove('visible'); break;
+                case 'load-power': savedPowers = getSavedPowers(); power = savedPowers.find(p => p.uid === uid); if(power) { if (slot === 'a') powerA = power; else powerB = power; renderPower(power, slot); battleBtn.disabled = !(powerA && powerB); document.getElementById('gallery-modal').classList.remove('visible'); } break;
+                case 'delete-power': savedPowers = getSavedPowers(); savePowers(savedPowers.filter(p => p.uid !== uid)); renderGallery(); break;
+                case 'open-character-profile': power = getSavedPowers().find(p => p.uid === uid); if (power) { renderCharacterProfile(power); document.getElementById('character-modal').classList.add('visible'); } break;
+                case 'generate-character-profile': generateCharacter(uid); break;
+                case 'open-evolution-tree': power = getSavedPowers().find(p => p.uid === uid); if (power) { renderEvolutionTree(power); document.getElementById('evolution-modal').classList.add('visible'); } break;
+                case 'unlock-skill': unlockSkill(uid, target.dataset.type); break;
+                case 'generate-mission': power = getSavedPowers().find(p => p.uid === uid); if (power) generateMission(power); break;
+                case 'complete-mission': awardXp(uid, 200); document.getElementById('mission-log').innerHTML = ''; break;
+                case 'open-item-generator': power = getSavedPowers().find(p => p.uid === uid); if (power) renderItemModal(power); break;
+                case 'equip-item': savedPowers = getSavedPowers(); power = savedPowers.find(p => p.uid === uid); if (power) { const item = generateItem(power); power.equippedItem = item; savePowers(savedPowers); renderCharacterProfile(power); document.getElementById('item-modal').classList.remove('visible'); } break;
+                case 'export-gallery': exportGallery(); break;
+                case 'import-gallery': document.getElementById('import-file-input').click(); break;
+                case 'share-power': sharePower(slot); break;
+            }
+        });
+        document.querySelectorAll('.generate-btn').forEach(btn => btn.addEventListener('click', () => generateAndRender(btn.dataset.slot)));
+        document.getElementById('generate-filtered-btn').addEventListener('click', () => generateAndRender('a', { rarity: rarityFilter.value, domain: domainFilter.value }));
+        battleBtn.addEventListener('click', battle);
+        document.getElementById('import-file-input').addEventListener('change', (e) => { if(e.target.files[0]) importGallery(e.target.files[0]); });
+        if(gallerySearch) gallerySearch.addEventListener('input', renderGallery);
+        if(gallerySort) gallerySort.addEventListener('change', renderGallery);
+        
+        // Event listeners para as novas funcionalidades
+        document.getElementById('detailed-log-btn').addEventListener('click', showDetailedLog);
+        document.getElementById('share-battle-btn').addEventListener('click', shareBattleResult);
+
+        function populateFilters() { Object.keys(rarities).forEach(key => rarityFilter.innerHTML += `<option value="${key}">${rarities[key].name}</option>`); Object.keys(domains).forEach(key => domainFilter.innerHTML += `<option value="${key}">${domains[key].name}</option>`); }
+        function initialize() {
+            populateFilters();
+            const encyclopediaModal = document.getElementById('encyclopedia-modal');
+            const encyclopediaTabs = encyclopediaModal.querySelector('.encyclopedia-tabs');
+            encyclopediaTabs.innerHTML = `<button class="btn" data-tab="domains">Domínios</button><button class="btn" data-tab="manifestations">Manifestações</button><button class="btn" data-tab="battles">Batalhas Épicas</button>`;
+            encyclopediaTabs.addEventListener('click', e => { if (e.target.dataset.tab) renderEncyclopedia(e.target.dataset.tab); });
         }
-
-        function switchView(newView) {
-            // Esconder todas as views
-            generatorView.classList.add('hidden');
-            arenaView.classList.add('hidden');
-            characterView.classList.add('hidden');
-            
-            // Mostrar a view selecionada
-            switch(newView) {
-                case 'generator':
-                    generatorView.classList.remove('hidden');
-                    viewToggleBtn.innerHTML = `<i class="fas fa-shield-alt"></i> Ir para Arena`;
-                    characterToggleBtn.innerHTML = `<i class="fas fa-user-plus"></i> Criar Personagem`;
-                    break;
-                case 'arena':
-                    arenaView.classList.remove('hidden');
-                    viewToggleBtn.innerHTML = `<i class="fas fa-dice-d20"></i> Voltar ao Gerador`;
-                    characterToggleBtn.innerHTML = `<i class="fas fa-user-plus"></i> Criar Personagem`;
-                    renderArena();
-                    arenaCombatants = [];
-                    arenaBattleBtn.disabled = true;
-                    break;
-                case 'character':
-                    characterView.classList.remove('hidden');
-                    viewToggleBtn.innerHTML = `<i class="fas fa-shield-alt"></i> Ir para Arena`;
-                    characterToggleBtn.innerHTML = `<i class="fas fa-dice-d20"></i> Voltar ao Gerador`;
-                    break;
-            }
-            
-            currentView = newView;
-        }
-
-        // EVENT LISTENERS
-        generateBtn.addEventListener('click', () => {
-            currentlyGeneratedPowers[0] = createSinglePower();
-            currentlyGeneratedPowers[1] = createSinglePower();
-            displayPower(currentlyGeneratedPowers[0], 1);
-            displayPower(currentlyGeneratedPowers[1], 2);
-            resultsContainer.classList.add('visible');
-            battleBtn.style.display = 'inline-block';
-        });
-
-        battleBtn.addEventListener('click', () => startBattle(currentlyGeneratedPowers[0], currentlyGeneratedPowers[1]));
-        arenaBattleBtn.addEventListener('click', () => {
-            if (arenaCombatants.length === 2) {
-                startBattle(arenaCombatants[0], arenaCombatants[1]);
-            }
-        });
-        
-        viewToggleBtn.addEventListener('click', () => {
-            if (currentView === 'generator') {
-                switchView('arena');
-            } else {
-                switchView('generator');
-            }
-        });
-
-        characterToggleBtn.addEventListener('click', () => {
-            if (currentView === 'character') {
-                switchView('generator');
-            } else {
-                switchView('character');
-            }
-        });
-        
-        mainModal.addEventListener('click', (event) => {
-            if (event.target === mainModal || event.target.closest('.close-btn')) {
-                mainModal.classList.remove('visible');
-            }
-        });
-
-        characterForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            
-            const formData = new FormData(characterForm);
-            const characterData = {
-                name: document.getElementById('character-name').value,
-                class: document.getElementById('character-class').value,
-                origin: document.getElementById('character-origin').value,
-                age: document.getElementById('character-age').value,
-                appearance: document.getElementById('character-appearance').value,
-                personality: document.getElementById('character-personality').value,
-                backstory: document.getElementById('character-backstory').value,
-                powerId: document.getElementById('character-power').value || null,
-                weakness: document.getElementById('character-weakness').value
-            };
-            
-            const newCharacter = createCharacter(characterData);
-            renderSavedCharacters();
-            
-            // Limpar formulário
-            characterForm.reset();
-            
-            alert(`Personagem "${newCharacter.name}" criado com sucesso!`);
-        });
-
-        document.addEventListener('click', (event) => {
-            const saveBtn = event.target.closest('.save-btn');
-            if(saveBtn) {
-                savePower(saveBtn.dataset.index);
-                saveBtn.innerHTML = `<i class="fas fa-check"></i>`;
-                saveBtn.disabled = true;
-            }
-            
-            const shareBtn = event.target.closest('.share-btn');
-            if(shareBtn) {
-                const index = shareBtn.dataset.index;
-                const id = shareBtn.dataset.id;
-                let powerToShare = null;
-                if (index) {
-                    powerToShare = currentlyGeneratedPowers[index];
-                } else if (id) {
-                    const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-                    powerToShare = savedPowers.find(p => p.id == id);
-                }
-                sharePower(powerToShare);
-            }
-        });
-        
-        savedPowersContainer.addEventListener('click', (event) => {
-            const deleteBtn = event.target.closest('.delete-btn');
-            if (deleteBtn) {
-                event.stopPropagation();
-                deletePower(deleteBtn.dataset.id);
-                return;
-            }
-            
-            const viewDetailsBtn = event.target.closest('.view-details-btn');
-            if (viewDetailsBtn) {
-                event.stopPropagation();
-                const card = viewDetailsBtn.closest('.saved-power-card');
-                const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-                const power = savedPowers.find(p => p.id == card.dataset.id);
-                if (power) showDetailModal(power, 'power');
-                return;
-            }
-            
-            const card = event.target.closest('.saved-power-card');
-            if (card) {
-                const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-                const power = savedPowers.find(p => p.id == card.dataset.id);
-                if (power) showDetailModal(power, 'power');
-            }
-        });
-
-        savedCharactersContainer.addEventListener('click', (event) => {
-            const deleteBtn = event.target.closest('.delete-btn');
-            if (deleteBtn) {
-                event.stopPropagation();
-                deleteCharacter(deleteBtn.dataset.id);
-                return;
-            }
-            
-            const viewDetailsBtn = event.target.closest('.view-details-btn');
-            if (viewDetailsBtn) {
-                event.stopPropagation();
-                const card = viewDetailsBtn.closest('.saved-character-card');
-                const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
-                const character = savedCharacters.find(c => c.id == card.dataset.id);
-                if (character) showDetailModal(character, 'character');
-                return;
-            }
-            
-            const card = event.target.closest('.saved-character-card');
-            if (card) {
-                const savedCharacters = JSON.parse(localStorage.getItem('savedCosmicCharacters') || '[]');
-                const character = savedCharacters.find(c => c.id == card.dataset.id);
-                if (character) showDetailModal(character, 'character');
-            }
-        });
-        
-        arenaContainer.addEventListener('click', (event) => {
-            const card = event.target.closest('.saved-power-card');
-            if (!card) return;
-            
-            const powerId = card.dataset.id;
-            const savedPowers = JSON.parse(localStorage.getItem('savedCosmicPowers') || '[]');
-            const power = savedPowers.find(p => p.id == powerId);
-            
-            if (card.classList.contains('selected')) {
-                card.classList.remove('selected');
-                arenaCombatants = arenaCombatants.filter(p => p.id !== power.id);
-            } else {
-                if (arenaCombatants.length < 2) {
-                    card.classList.add('selected');
-                    arenaCombatants.push(power);
-                }
-            }
-            arenaBattleBtn.disabled = arenaCombatants.length !== 2;
-        });
-        
-        searchInput.addEventListener('input', () => {
-            renderSavedPowers(searchInput.value, document.querySelector('#saved-filters .filter-btn.active').dataset.filter);
-        });
-
-        searchCharactersInput.addEventListener('input', () => {
-            renderSavedCharacters(searchCharactersInput.value, document.querySelector('#character-filters .filter-btn.active').dataset.filter);
-        });
-        
-        filterBtnContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('filter-btn')) {
-                document.querySelector('#saved-filters .filter-btn.active').classList.remove('active');
-                event.target.classList.add('active');
-                renderSavedPowers(searchInput.value, event.target.dataset.filter);
-            }
-        });
-
-        characterFilterBtnContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('filter-btn')) {
-                document.querySelector('#character-filters .filter-btn.active').classList.remove('active');
-                event.target.classList.add('active');
-                renderSavedCharacters(searchCharactersInput.value, event.target.dataset.filter);
-            }
-        });
-
-        // INICIALIZAÇÃO
-        document.addEventListener('DOMContentLoaded', () => {
-            populateThemeSelector();
-            populateFilterButtons();
-            populateCharacterFilterButtons();
-            renderSavedPowers();
-            renderSavedCharacters();
-            updateCharacterPowerSelect();
-        });
-
+        initialize();
+    });
     </script>
 </body>
 </html>
-
